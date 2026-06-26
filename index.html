@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alex Rivera — Data Product Manager</title>
+<meta name="description" content="Alex Rivera, a data product manager who turns ambiguous problems into shipped, measurable products.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="topbar">
+  <a href="#intro" class="topbar__logo" aria-label="Alex Rivera — home">
+    <img src="assets/logo.png" alt="Alex Rivera logo" class="topbar__logo-mark">
+  </a>
+  <button class="topbar__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span>
+  </button>
+</header>
+
+<a href="#intro" class="sectionnav__logo" aria-label="Alex Rivera — home">
+  <img src="assets/logo.png" alt="Alex Rivera logo" class="sectionnav__logo-mark">
+</a>
+
+<nav class="sectionnav" id="dotnav" aria-label="Section navigation">
+  <ul>
+    <li><a href="#intro" class="active">Intro</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ===== INTRO / HERO ===== -->
+  <section id="intro" class="section hero">
+    <p class="eyebrow mono">
+      <span class="eyebrow__group">For
+        <button class="audience" data-bio="anyone" aria-pressed="true">anyone</button>
+      </span>
+      <button class="audience" data-bio="hiring">Hiring Managers</button>
+      <button class="audience" data-bio="engineers">Engineers</button>
+      <button class="audience" data-bio="analysts">Analysts</button>
+      <button class="audience" data-bio="founders">Founders</button>
+    </p>
+    <h1 class="hero__headline" data-reveal-lines id="heroHeadline">
+      <span class="line">Hi, I'm Alex —</span>
+      <span class="line">a product manager</span>
+      <span class="line">who finds the story</span>
+      <span class="line">hiding in the data.</span>
+    </h1>
+  </section>
+
+  <!-- ===== WORK ===== -->
+  <section id="work" class="section work-pin-section">
+    <div class="work-pin" id="workPin">
+    <p class="section__index mono">Work</p>
+
+    <div class="project-viewport" id="workViewport">
+      <div class="project-track stagger-group" id="workTrack">
+    <article class="project">
+      <div class="project__meta mono">PLACEHOLDER — 2025</div>
+      <h3 class="project__title hover-shift">Retention dashboard that people actually opened</h3>
+      <div class="project__layout">
+        <div class="project__side">
+          <p class="project__role mono">Role — Product Manager</p>
+          <ul class="project__tags mono">
+            <li>SQL</li><li>Looker</li><li>Experimentation</li><li>0→1</li>
+          </ul>
+        </div>
+        <p class="project__body">
+          Replaced a 40-tab spreadsheet nobody trusted with a single source of
+          truth for retention. Partnered with one analyst and one engineer,
+          defined the metric tree from scratch, and shipped a v1 in six weeks.
+          Weekly active usage of the dashboard itself became the team's proxy
+          for "are we actually data-informed yet."
+        </p>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="project__meta mono">PLACEHOLDER — 2024</div>
+      <h3 class="project__title hover-shift">Pricing experiment that changed the roadmap</h3>
+      <div class="project__layout">
+        <div class="project__side">
+          <p class="project__role mono">Role — Associate PM</p>
+          <ul class="project__tags mono">
+            <li>A/B Testing</li><li>SQL</li><li>Stakeholder alignment</li>
+          </ul>
+        </div>
+        <p class="project__body">
+          Designed and ran an A/B test on a pricing page most of the company
+          assumed was "done." The losing variant told us more than the
+          winner did — it surfaced a segment we'd been quietly underserving
+          for a year, which became next quarter's top priority.
+        </p>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="project__meta mono">PLACEHOLDER — 2023</div>
+      <h3 class="project__title hover-shift">Self-serve reporting for a non-technical sales team</h3>
+      <div class="project__layout">
+        <div class="project__side">
+          <p class="project__role mono">Role — Business/Data Analyst</p>
+          <ul class="project__tags mono">
+            <li>SQL</li><li>dbt</li><li>UX writing</li>
+          </ul>
+        </div>
+        <p class="project__body">
+          Sales kept asking analysts for "just one more pull." Built a guided,
+          plain-language reporting tool on top of our warehouse so reps could
+          answer their own questions. Analyst request volume dropped, and
+          reps started asking better questions.
+        </p>
+      </div>
+    </article>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ===== APPROACH / VALUES ===== -->
+  <section id="approach" class="section approach approach-pin-section">
+    <div class="approach-pin" id="approachPin">
+    <p class="section__index mono">Approach</p>
+    <div class="approach__layout">
+
+      <!-- Left lane: card 1 (Curious/Rigorous) then card 4 (second paragraph) -->
+      <div class="approach-lane approach-lane--left" id="approachLaneLeft">
+        <div class="approach-track" id="approachTrackLeft">
+          <div class="approach-card">
+            <ul class="values">
+              <li>Curious</li>
+              <li>Rigorous</li>
+            </ul>
+          </div>
+          <div class="approach-card">
+            <p class="approach__body approach__body--lower">
+              I came into product management from data analysis, which means I
+              default to asking "how would we know if this worked?" before I ask
+              "what should we build?" I'm early in my PM career, which I think is
+              an advantage right now: I don't yet have bad habits to unlearn, and
+              I'm still genuinely excited by a clean dataset.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right lane: starts empty, then card 2 (first paragraph) slides
+           up into view, then card 3 (Plain-spoken/Resourceful) slides up
+           to replace it. The leading empty .approach-card is what makes
+           2's ARRIVAL visible from frame one, instead of 2 already
+           sitting in place before any scrolling happens. -->
+      <div class="approach-lane approach-lane--right" id="approachLaneRight">
+        <div class="approach-track" id="approachTrackRight">
+          <div class="approach-card approach-card--empty" aria-hidden="true"></div>
+          <div class="approach-card">
+            <p class="approach__body approach__body--upper">
+              These are the four words I'd want a teammate to use about me. I ask
+              one more question before I ship, and I'd rather find out a number is
+              wrong myself than have someone else find it for me. I say what I mean
+              in plain sentences, and I've learned to get real signal out of
+              whatever data, time, or headcount I actually have — not the version
+              I wish I had.
+            </p>
+          </div>
+          <div class="approach-card">
+            <ul class="values">
+              <li>Plain-spoken</li>
+              <li>Resourceful</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </section>
+
+  <!-- Mobile-only: identical content, plain stacked flow, zero JS/pin involvement.
+       Hidden on desktop via CSS, same pattern as Work's mobile fallback. -->
+  <section class="section approach approach-mobile-fallback">
+    <p class="section__index mono">Approach</p>
+    <div class="approach__layout">
+      <ul class="values">
+        <li>Curious</li>
+        <li>Rigorous</li>
+        <li>Plain-spoken</li>
+        <li>Resourceful</li>
+      </ul>
+      <p class="approach__body approach__body--upper">
+        These are the four words I'd want a teammate to use about me. I ask
+        one more question before I ship, and I'd rather find out a number is
+        wrong myself than have someone else find it for me. I say what I mean
+        in plain sentences, and I've learned to get real signal out of
+        whatever data, time, or headcount I actually have — not the version
+        I wish I had.
+      </p>
+      <p class="approach__body approach__body--lower">
+        I came into product management from data analysis, which means I
+        default to asking "how would we know if this worked?" before I ask
+        "what should we build?" I'm early in my PM career, which I think is
+        an advantage right now: I don't yet have bad habits to unlearn, and
+        I'm still genuinely excited by a clean dataset.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== EXPERIENCE TIMELINE ===== -->
+  <section id="experience" class="section">
+    <p class="section__index mono">Experience</p>
+
+    <ol class="timeline stagger-group">
+      <li class="timeline__item">
+        <p class="timeline__org mono">PLACEHOLDER COMPANY</p>
+        <h3 class="timeline__role">Product Manager</h3>
+        <div class="timeline__when mono">Now · Remote</div>
+        <p class="timeline__body">Owning the analytics platform's core reporting surface. Working closely with data engineering on what we measure and why.</p>
+      </li>
+      <li class="timeline__item">
+        <p class="timeline__org mono">PLACEHOLDER COMPANY</p>
+        <h3 class="timeline__role">Associate Product Manager</h3>
+        <div class="timeline__when mono">2024–2025 · Remote</div>
+        <p class="timeline__body">First PM role. Embedded with the growth team, ran experiments, learned the difference between a metric that moves and a metric that matters.</p>
+      </li>
+      <li class="timeline__item">
+        <p class="timeline__org mono">PLACEHOLDER COMPANY</p>
+        <h3 class="timeline__role">Business / Data Analyst</h3>
+        <div class="timeline__when mono">2022–2024 · Remote</div>
+        <p class="timeline__body">Where I learned SQL the hard way, on real questions with real deadlines. Built the reporting habits I still use today.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="section about">
+    <p class="section__index mono">About</p>
+    <div class="about__grid">
+      <div class="about__photo">
+        <img src="assets/logo.png" alt="Illustrated portrait of Alex Rivera">
+      </div>
+      <div class="about__text">
+        <p>
+          I'm a data-leaning product manager early in my career, currently
+          based in PLACEHOLDER CITY. Before product, I spent two years as an
+          analyst, which is where I actually learned to be useful with a
+          dataset instead of just curious about one.
+        </p>
+        <p>
+          I care about products that are honest about what they don't know
+          yet, and about dashboards nobody has to be told to check. Outside
+          of work, [placeholder: a real, specific interest — a hobby,
+          sport, or pursuit — go here].
+        </p>
+        <div class="about__degree">
+          <p class="timeline__org mono">PLACEHOLDER UNIVERSITY</p>
+          <h3 class="timeline__role timeline__role--small">B.S./B.A., Your Degree</h3>
+          <div class="timeline__when mono">PLACEHOLDER YEARS</div>
+          <p class="timeline__body">Where the SQL habit started, somewhere between coursework and a part-time job that needed a spreadsheet fixed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="about__notes stagger-group">
+      <blockquote class="note">
+        <p>“Placeholder quote — swap for a real line from a manager, mentor,
+        or teammate about how you work, once you have one.”</p>
+        <footer>Placeholder Name <span class="mono">— Manager</span></footer>
+      </blockquote>
+
+      <blockquote class="note">
+        <p>“Placeholder quote — a peer's take on how you collaborate or how
+        you think through ambiguous problems.”</p>
+        <footer>Placeholder Name <span class="mono">— Peer Analyst</span></footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="section contact">
+    <p class="contact__status mono">
+      <span class="status-dot" aria-hidden="true"></span>
+      Open to new roles
+    </p>
+    <h2 class="contact__headline">Let's talk about your data problem.</h2>
+    <a class="contact__email" href="mailto:placeholder@email.com">placeholder@email.com</a>
+    <div class="contact__links">
+      <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#" target="_blank" rel="noopener">Résumé (PDF)</a>
+      <a href="#" target="_blank" rel="noopener">Medium Blog</a>
+    </div>
+    <p class="colophon mono">
+      <img src="assets/logo.png" alt="" class="colophon__mark">
+      Built by Alex Rivera, with a little help. © 2026
+    </p>
+  </section>
+
+</main>
+
+<!-- Populated entirely by JS (see script.js) — positions are computed from
+     each section's real measured layout, not hardcoded here. -->
+<div id="scatterLayer" aria-hidden="true"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
