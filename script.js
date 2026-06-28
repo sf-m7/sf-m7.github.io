@@ -1,11 +1,12 @@
 // ============================================
 // SPLASH SCREEN — shows on every load (no localStorage skip, by
-// design). Holds for 3s, then fades out over 0.6s; the real site
-// (main + nav, hidden via .splash-active on <html> — see CSS) fades
-// in over that same 0.6s so the handoff reads as one motion rather
-// than two separate animations. The splash element itself is removed
-// from the DOM after its own transition ends, so it can never block
-// clicks or sit around as dead markup.
+// design). Sequence: mounts at opacity:0, fades IN over 0.4s, holds,
+// then fades OUT over 0.6s while the real site fades in underneath
+// it (.splash-active -> .splash-done on <html> — see CSS) — the two
+// fades overlap on purpose, so the handoff reads as one continuous
+// cross-fade rather than two separate animations. The splash element
+// itself is removed from the DOM after its own fade-out transition
+// ends, so it can never block clicks or sit around as dead markup.
 //
 // Runs first, before any other script below, so the rest of the page's
 // own scroll-position-driven setup (Work/Approach pin math, the
@@ -18,8 +19,23 @@
   const root = document.documentElement;
   if (!splash) return;
 
-  const HOLD_MS = 3000;
-  const FADE_MS = 600;
+  const FADE_IN_MS = 400;
+  const HOLD_MS = 1950;   // was 3000ms — reduced 35% per feedback
+  const FADE_OUT_MS = 600;
+
+  // Starts the fade-IN. Needs to run on a separate frame from mount —
+  // adding the class in the SAME tick the element is created would
+  // give the browser no "before" state to transition from (it would
+  // just paint already-at-opacity:1, no visible fade). requestAnimationFrame
+  // (x2, to be safe across browsers that batch style+layout differently)
+  // guarantees at least one real paint at opacity:0 happens first.
+  function fadeIn() {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        splash.classList.add('splash-in');
+      });
+    });
+  }
 
   function reveal() {
     splash.classList.add('splash-out');
@@ -41,18 +57,25 @@
     splash.addEventListener('transitionend', remove, { once: true });
     // Fallback in case transitionend doesn't fire (e.g. element was
     // already display:none for some reason) — never leave it stuck.
-    setTimeout(remove, FADE_MS + 200);
+    setTimeout(remove, FADE_OUT_MS + 200);
   }
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    // Skip the hold/fade theatrics, but still show the splash only
-    // very briefly rather than not at all — keeps "shows every
-    // session" true while respecting the no-motion preference.
+    // Skip the fade-in/hold/fade-out theatrics, but still show the
+    // splash only very briefly rather than not at all — keeps "shows
+    // every session" true while respecting the no-motion preference.
     setTimeout(reveal, 150);
     return;
   }
 
-  setTimeout(reveal, HOLD_MS);
+  fadeIn();
+  // Total time the splash is fully visible before it starts fading out:
+  // the fade-in's own duration, then the hold. Fading IN is itself part
+  // of "appearing on screen", so it's counted here rather than treating
+  // HOLD_MS as the entire on-screen time — reveal() only fires once the
+  // fade-in has actually had time to finish, not while it's still
+  // mid-transition.
+  setTimeout(reveal, FADE_IN_MS + HOLD_MS);
 })();
 
 // ============================================
