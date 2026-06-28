@@ -10,8 +10,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="assets/logo.png">
+<script>
+  // Runs before paint, before style.css even has a chance to apply —
+  // guarantees the real site is hidden from frame 0, not just after
+  // the splash CSS loads. Removed/overridden by script.js once the
+  // splash's own fade-out finishes.
+  document.documentElement.classList.add('splash-active');
+</script>
 </head>
 <body>
+
+<!-- ===== SPLASH SCREEN =====
+     Shows on every load (no localStorage skip), holds, then fades out
+     starting at 3s. Pure CSS animation, driven by .splash-active on
+     <html> (set in the head, before body even paints, so there is no
+     flash of the real site underneath). JS removes the class +
+     unmounts the splash element after the fade finishes — see
+     script.js. -->
+<div class="splash" id="splash" aria-hidden="true">
+  <div class="splash__mark">
+    <span class="splash__bracket" aria-hidden="true">⟜</span>
+    <span class="splash__name">Saif Elmlah</span>
+  </div>
+  <p class="splash__title">
+    Product Growth Manager
+    <span class="splash__rule" aria-hidden="true"></span>
+  </p>
+</div>
 
 <!-- ===== NAV ===== -->
 <header class="topbar">
@@ -282,6 +307,93 @@
         you think through ambiguous problems.”</p>
         <footer>Placeholder Name <span class="mono">— Peer Analyst</span></footer>
       </blockquote>
+    </div>
+  </section>
+
+  <!-- ===== CERTIFICATIONS CAROUSEL =====
+       Own top-level section (not nested in #about) so it picks up the
+       standard .section fade-in-on-scroll + top hairline treatment for
+       free. Logos render twice back-to-back (.certs-track holds two
+       identical sets) — that exact duplication is what makes the CSS
+       loop seamless; see the keyframe comment in style.css. Hovering
+       anywhere over the strip pauses the scroll; moving away resumes
+       it — pure CSS, no JS needed for that part. -->
+  <section class="section certs">
+    <p class="certs__label mono">Continuous learning</p>
+    <div class="certs__carousel" id="certsCarousel">
+      <div class="certs__track" id="certsTrack">
+        <div class="cert-item">
+          <img src="assets/certs/mckinsey.svg" alt="McKinsey & Company" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">Forward Program</span>
+            <span class="cert-item__duration mono">6 Months</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <img src="assets/certs/google.svg" alt="Google" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">UXD Professional Certificate</span>
+            <span class="cert-item__duration mono">6 Months</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <img src="assets/certs/udacity.svg" alt="Udacity" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">UXR Nanodegree</span>
+            <span class="cert-item__duration mono">3 Months</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <img src="assets/certs/uva-darden.svg" alt="University of Virginia, Darden School of Business" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">Design Thinking</span>
+            <span class="cert-item__duration mono">4 Weeks</span>
+          </div>
+        </div>
+        <div class="cert-item">
+          <img src="assets/certs/365ds.svg" alt="365 Data Science" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">Business Analyst Track</span>
+            <span class="cert-item__duration mono">55 Hours</span>
+          </div>
+        </div>
+        <!-- Set 2 — exact duplicate, required for the seamless loop -->
+        <div class="cert-item" aria-hidden="true">
+          <img src="assets/certs/mckinsey.svg" alt="" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">Forward Program</span>
+            <span class="cert-item__duration mono">6 Months</span>
+          </div>
+        </div>
+        <div class="cert-item" aria-hidden="true">
+          <img src="assets/certs/google.svg" alt="" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">UXD Professional Certificate</span>
+            <span class="cert-item__duration mono">6 Months</span>
+          </div>
+        </div>
+        <div class="cert-item" aria-hidden="true">
+          <img src="assets/certs/udacity.svg" alt="" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">UXR Nanodegree</span>
+            <span class="cert-item__duration mono">3 Months</span>
+          </div>
+        </div>
+        <div class="cert-item" aria-hidden="true">
+          <img src="assets/certs/uva-darden.svg" alt="" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">Design Thinking</span>
+            <span class="cert-item__duration mono">4 Weeks</span>
+          </div>
+        </div>
+        <div class="cert-item" aria-hidden="true">
+          <img src="assets/certs/365ds.svg" alt="" class="cert-item__logo">
+          <div class="cert-item__text">
+            <span class="cert-item__name">Business Analyst Track</span>
+            <span class="cert-item__duration mono">55 Hours</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
