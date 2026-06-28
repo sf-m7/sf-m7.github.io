@@ -41,10 +41,19 @@
 
 /* ============================================
    SPLASH SCREEN
-   Shows on every load. Holds for 3s, then fades out over 0.6s; the real
-   site fades in underneath over the same span (see .splash-active /
-   .splash-done toggling on <html>, driven by script.js). No
-   localStorage skip — by design, this runs every single visit.
+   Shows on every load (no localStorage skip — by design, every
+   visit). Sequence: fades IN over 0.4s, holds, then fades OUT over
+   0.6s while the real site fades in underneath it — the two fades
+   overlap deliberately (site starts revealing as the splash starts
+   dimming) so it reads as one continuous cross-fade/mask-reveal
+   rather than two separate back-to-back animations. Hold + fade
+   timing is computed in script.js (HOLD_MS / FADE_MS), not here.
+
+   Content is left-aligned to the SAME edge the fixed nav sits at
+   (var(--gutter)) rather than centered, so the splash's name reads
+   like it's already sitting where the nav/logo will be once revealed
+   — one fixed anchor point instead of the eye having to jump from
+   center to left when the site appears underneath.
    ============================================ */
 html.splash-active {
   overflow: hidden; /* no real-site scroll peeking behind the splash */
@@ -76,19 +85,28 @@ html.splash-done .sectionnav__logo {
   z-index: 999;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 0.6rem;
+  padding-left: var(--gutter);
   background: var(--paper);
-  opacity: 1;
+  opacity: 0;
   transition: opacity 0.6s var(--ease);
 }
-/* .splash-out is added by script.js right as the 3s hold ends —
-   separate from .splash-active so the fade is its own explicit step
-   rather than relying on removing splash-active to also (accidentally)
-   trigger it. */
+/* .splash-in is added a tick after mount (see script.js) — starting
+   from opacity:0 above and transitioning here is what produces the
+   actual fade-IN; it can't just start at opacity:1, or there is
+   nothing to transition FROM. */
+.splash.splash-in {
+  opacity: 1;
+  transition: opacity 0.4s var(--ease);
+}
+/* .splash-out overrides splash-in's opacity target — same element,
+   later state, slower transition so the OUT fade reads slightly more
+   gradual than the quick fade-in. */
 .splash.splash-out {
   opacity: 0;
+  transition: opacity 0.6s var(--ease);
   pointer-events: none;
 }
 
@@ -924,12 +942,26 @@ main {
 
 /* ============================================
    CERTIFICATIONS CAROUSEL — infinite auto-scroll, pauses on hover.
-   Track holds the logo set TWICE back-to-back (see index.html); the
-   keyframe moves exactly -50% of the track's own width, which lands
-   set 2 precisely where set 1 started, so the loop has no visible
-   seam or jump. Logos are full-color brand SVGs, left at their native
-   colors (no invert/filter) since there's no dark theme in this build
-   yet to coordinate with.
+
+   Each .cert-item is ONE <img>: the SVGs themselves are complete,
+   finished cards (logo mark + divider + cert name + duration, all
+   baked into the file as exported) — there is no separate bare
+   logomark to pair with extra HTML text, so nothing else is layered
+   on top. Sized by height only; width is left to scale naturally per
+   image's own aspect ratio, since the 5 source files aren't all the
+   same proportions.
+
+   Track holds the set TWICE back-to-back (see index.html) for a
+   seamless loop: the keyframe moves exactly -50% of the track's own
+   width, which is only seamless if set 1 and set 2 measure to
+   IDENTICAL widths — true here since spacing is uniform (one `gap`
+   value on the track, no per-item border/padding that could make the
+   set1→set2 seam look different from every other gap). That uniform-
+   seam requirement is also why there's no border between items
+   anymore: a border would have to vanish on exactly one item (the
+   last of "set 1") to avoid a double-line at the seam, which is the
+   kind of inconsistency that reads as a visible hiccup even when the
+   distance itself is correct.
    ============================================ */
 .certs__label {
   margin: 0 0 2rem;
@@ -946,44 +978,21 @@ main {
   display: flex;
   align-items: center;
   width: max-content;
-  gap: clamp(2.5rem, 5vw, 4.5rem);
-  animation: certsScroll 32s linear infinite;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  animation: certsScroll 28s linear infinite;
 }
 .certs__carousel:hover .certs__track {
   animation-play-state: paused;
 }
 .cert-item {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  flex-shrink: 0;
-  padding-right: clamp(2.5rem, 5vw, 4.5rem);
-  border-right: 1px solid var(--hairline);
 }
-.cert-item:last-child {
-  border-right: none;
-  padding-right: 0;
-}
-.cert-item__logo {
-  height: 22px;
+.cert-item__img {
+  height: 28px;
   width: auto;
-  flex-shrink: 0;
   display: block;
-}
-.cert-item__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  white-space: nowrap;
-}
-.cert-item__name {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--ink);
-}
-.cert-item__duration {
-  color: var(--gray);
 }
 
 @keyframes certsScroll {
@@ -996,8 +1005,8 @@ main {
 }
 
 @media (max-width: 560px) {
-  .cert-item__logo { height: 18px; }
-  .cert-item { gap: 0.7rem; padding-right: 2rem; }
+  .cert-item__img { height: 22px; }
+  .certs__track { gap: 2rem; }
 }
 
 /* ============================================
