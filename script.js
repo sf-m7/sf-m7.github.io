@@ -1,4 +1,61 @@
 // ============================================
+// SPLASH SCREEN — shows on every load (no localStorage skip, by
+// design). Holds for 3s, then fades out over 0.6s; the real site
+// (main + nav, hidden via .splash-active on <html> — see CSS) fades
+// in over that same 0.6s so the handoff reads as one motion rather
+// than two separate animations. The splash element itself is removed
+// from the DOM after its own transition ends, so it can never block
+// clicks or sit around as dead markup.
+//
+// Runs first, before any other script below, so the rest of the page's
+// own scroll-position-driven setup (Work/Approach pin math, the
+// scatter-shape layer, etc.) still runs immediately on load exactly as
+// it always has — none of that is delayed by the splash; only its
+// VISIBILITY is held back via opacity/overflow, not its initialization.
+// ============================================
+(function splashScreen() {
+  const splash = document.getElementById('splash');
+  const root = document.documentElement;
+  if (!splash) return;
+
+  const HOLD_MS = 3000;
+  const FADE_MS = 600;
+
+  function reveal() {
+    splash.classList.add('splash-out');
+    root.classList.remove('splash-active');
+    root.classList.add('splash-done');
+
+    // Remove the splash node once its own fade-out transition has
+    // actually finished, not on a guessed timeout — avoids ever
+    // cutting the fade short or leaving a stray invisible element
+    // sitting on top of the page (pointer-events is already off via
+    // CSS the moment .splash-out lands, but removing it outright is
+    // cleaner for things like screen readers / DOM size).
+    let removed = false;
+    function remove() {
+      if (removed) return;
+      removed = true;
+      splash.remove();
+    }
+    splash.addEventListener('transitionend', remove, { once: true });
+    // Fallback in case transitionend doesn't fire (e.g. element was
+    // already display:none for some reason) — never leave it stuck.
+    setTimeout(remove, FADE_MS + 200);
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Skip the hold/fade theatrics, but still show the splash only
+    // very briefly rather than not at all — keeps "shows every
+    // session" true while respecting the no-motion preference.
+    setTimeout(reveal, 150);
+    return;
+  }
+
+  setTimeout(reveal, HOLD_MS);
+})();
+
+// ============================================
 // Scatter layer: 4 floating shapes — two near the top of the page (c1,
 // c2), two near the bottom (c15, c16). Each renders ON TOP of page
 // content (no positioned stacking context on <main>, so #scatterLayer's
