@@ -39,6 +39,104 @@
      the palette is a deliberate warm-paper choice, not a default. */
 }
 
+/* ============================================
+   SPLASH SCREEN
+   Shows on every load. Holds for 3s, then fades out over 0.6s; the real
+   site fades in underneath over the same span (see .splash-active /
+   .splash-done toggling on <html>, driven by script.js). No
+   localStorage skip — by design, this runs every single visit.
+   ============================================ */
+html.splash-active {
+  overflow: hidden; /* no real-site scroll peeking behind the splash */
+}
+html.splash-active body {
+  overflow: hidden;
+}
+/* Real site content fades in under the splash once script.js starts
+   the reveal — kept subtle (a quick rise from near-invisible) rather
+   than a hard cut, so the splash's fade-out and the site's fade-in
+   read as one continuous handoff instead of two unrelated animations. */
+html.splash-active main,
+html.splash-active .topbar,
+html.splash-active .sectionnav,
+html.splash-active .sectionnav__logo {
+  opacity: 0;
+}
+html.splash-done main,
+html.splash-done .topbar,
+html.splash-done .sectionnav,
+html.splash-done .sectionnav__logo {
+  opacity: 1;
+  transition: opacity 0.6s var(--ease);
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: var(--paper);
+  opacity: 1;
+  transition: opacity 0.6s var(--ease);
+}
+/* .splash-out is added by script.js right as the 3s hold ends —
+   separate from .splash-active so the fade is its own explicit step
+   rather than relying on removing splash-active to also (accidentally)
+   trigger it. */
+.splash.splash-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash__mark {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.splash__bracket {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: var(--ink);
+  transform: scaleX(-1); /* small corner-bracket flourish, mirrored to point inward at the name */
+  display: inline-block;
+}
+.splash__name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.splash__title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  color: var(--body-ink);
+}
+.splash__rule {
+  display: inline-block;
+  width: clamp(60px, 12vw, 140px);
+  height: 1px;
+  background: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash { transition: none; }
+  html.splash-done main,
+  html.splash-done .topbar,
+  html.splash-done .sectionnav,
+  html.splash-done .sectionnav__logo {
+    transition: none;
+  }
+}
+
 * { box-sizing: border-box; overflow-wrap: break-word; }
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
@@ -823,6 +921,84 @@ main {
   color: var(--gray);
 }
 .note footer .mono { display: inline; }
+
+/* ============================================
+   CERTIFICATIONS CAROUSEL — infinite auto-scroll, pauses on hover.
+   Track holds the logo set TWICE back-to-back (see index.html); the
+   keyframe moves exactly -50% of the track's own width, which lands
+   set 2 precisely where set 1 started, so the loop has no visible
+   seam or jump. Logos are full-color brand SVGs, left at their native
+   colors (no invert/filter) since there's no dark theme in this build
+   yet to coordinate with.
+   ============================================ */
+.certs__label {
+  margin: 0 0 2rem;
+}
+.certs__carousel {
+  width: 100%;
+  overflow: hidden;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.certs__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  animation: certsScroll 32s linear infinite;
+}
+.certs__carousel:hover .certs__track {
+  animation-play-state: paused;
+}
+.cert-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-shrink: 0;
+  padding-right: clamp(2.5rem, 5vw, 4.5rem);
+  border-right: 1px solid var(--hairline);
+}
+.cert-item:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+.cert-item__logo {
+  height: 22px;
+  width: auto;
+  flex-shrink: 0;
+  display: block;
+}
+.cert-item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  white-space: nowrap;
+}
+.cert-item__name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cert-item__duration {
+  color: var(--gray);
+}
+
+@keyframes certsScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .certs__track { animation: none; }
+}
+
+@media (max-width: 560px) {
+  .cert-item__logo { height: 18px; }
+  .cert-item { gap: 0.7rem; padding-right: 2rem; }
+}
 
 /* ============================================
    ABOUT
