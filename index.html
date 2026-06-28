@@ -313,86 +313,39 @@
   <!-- ===== CERTIFICATIONS CAROUSEL =====
        Own top-level section (not nested in #about) so it picks up the
        standard .section fade-in-on-scroll + top hairline treatment for
-       free. Logos render twice back-to-back (.certs-track holds two
-       identical sets) — that exact duplication is what makes the CSS
-       loop seamless; see the keyframe comment in style.css. Hovering
-       anywhere over the strip pauses the scroll; moving away resumes
-       it — pure CSS, no JS needed for that part. -->
+       free.
+
+       Each SVG is a COMPLETE cert-item card on its own — logo mark,
+       divider, certificate name, and duration are all baked into the
+       file as exported (confirmed by extracting the embedded raster
+       data: the "logo" is the full wordmark image, and the cert
+       name/duration are vector text already inside the same file).
+       There is no separate bare logomark to pair with extra HTML
+       text, so each <img> is used as-is with NOTHING else layered on
+       top — adding parallel HTML text was the original bug (it
+       rendered as a literal duplicate of text already inside the
+       SVG).
+
+       Logos render twice back-to-back (.certs__track holds two
+       identical sets) for the seamless CSS loop; see the keyframe
+       comment in style.css for why -50% (not -100%) is the right
+       value. Hovering anywhere over the strip pauses the scroll;
+       moving away resumes it — pure CSS, no JS needed for that part. -->
   <section class="section certs">
     <p class="certs__label mono">Continuous learning</p>
     <div class="certs__carousel" id="certsCarousel">
       <div class="certs__track" id="certsTrack">
-        <div class="cert-item">
-          <img src="assets/certs/mckinsey.svg" alt="McKinsey & Company" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">Forward Program</span>
-            <span class="cert-item__duration mono">6 Months</span>
-          </div>
-        </div>
-        <div class="cert-item">
-          <img src="assets/certs/google.svg" alt="Google" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">UXD Professional Certificate</span>
-            <span class="cert-item__duration mono">6 Months</span>
-          </div>
-        </div>
-        <div class="cert-item">
-          <img src="assets/certs/udacity.svg" alt="Udacity" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">UXR Nanodegree</span>
-            <span class="cert-item__duration mono">3 Months</span>
-          </div>
-        </div>
-        <div class="cert-item">
-          <img src="assets/certs/uva-darden.svg" alt="University of Virginia, Darden School of Business" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">Design Thinking</span>
-            <span class="cert-item__duration mono">4 Weeks</span>
-          </div>
-        </div>
-        <div class="cert-item">
-          <img src="assets/certs/365ds.svg" alt="365 Data Science" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">Business Analyst Track</span>
-            <span class="cert-item__duration mono">55 Hours</span>
-          </div>
-        </div>
+        <div class="cert-item"><img src="assets/certs/mckinsey.svg" alt="McKinsey & Company — Forward Program, 6 Months" class="cert-item__img"></div>
+        <div class="cert-item"><img src="assets/certs/google.svg" alt="Google — UXD Professional Certificate, 6 Months" class="cert-item__img"></div>
+        <div class="cert-item"><img src="assets/certs/udacity.svg" alt="Udacity — UXR Nanodegree, 3 Months" class="cert-item__img"></div>
+        <div class="cert-item"><img src="assets/certs/uva-darden.svg" alt="University of Virginia, Darden School of Business — Design Thinking, 4 Weeks" class="cert-item__img"></div>
+        <div class="cert-item"><img src="assets/certs/365ds.svg" alt="365 Data Science — Business Analyst Track, 55 Hours" class="cert-item__img"></div>
         <!-- Set 2 — exact duplicate, required for the seamless loop -->
-        <div class="cert-item" aria-hidden="true">
-          <img src="assets/certs/mckinsey.svg" alt="" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">Forward Program</span>
-            <span class="cert-item__duration mono">6 Months</span>
-          </div>
-        </div>
-        <div class="cert-item" aria-hidden="true">
-          <img src="assets/certs/google.svg" alt="" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">UXD Professional Certificate</span>
-            <span class="cert-item__duration mono">6 Months</span>
-          </div>
-        </div>
-        <div class="cert-item" aria-hidden="true">
-          <img src="assets/certs/udacity.svg" alt="" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">UXR Nanodegree</span>
-            <span class="cert-item__duration mono">3 Months</span>
-          </div>
-        </div>
-        <div class="cert-item" aria-hidden="true">
-          <img src="assets/certs/uva-darden.svg" alt="" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">Design Thinking</span>
-            <span class="cert-item__duration mono">4 Weeks</span>
-          </div>
-        </div>
-        <div class="cert-item" aria-hidden="true">
-          <img src="assets/certs/365ds.svg" alt="" class="cert-item__logo">
-          <div class="cert-item__text">
-            <span class="cert-item__name">Business Analyst Track</span>
-            <span class="cert-item__duration mono">55 Hours</span>
-          </div>
-        </div>
+        <div class="cert-item" aria-hidden="true"><img src="assets/certs/mckinsey.svg" alt="" class="cert-item__img"></div>
+        <div class="cert-item" aria-hidden="true"><img src="assets/certs/google.svg" alt="" class="cert-item__img"></div>
+        <div class="cert-item" aria-hidden="true"><img src="assets/certs/udacity.svg" alt="" class="cert-item__img"></div>
+        <div class="cert-item" aria-hidden="true"><img src="assets/certs/uva-darden.svg" alt="" class="cert-item__img"></div>
+        <div class="cert-item" aria-hidden="true"><img src="assets/certs/365ds.svg" alt="" class="cert-item__img"></div>
       </div>
     </div>
   </section>
