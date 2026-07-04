@@ -256,10 +256,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 .sectionnav {
+  /* Anchored to the SAME fixed top-offset as .hero's padding-top
+     (not a viewport-height percentage) so "INTRO" always lines up
+     with the hero's first line, regardless of window height. */
   position: fixed;
-  top: 42%;
+  top: clamp(9.8rem, 18vh, 10rem);
   left: var(--gutter);
-  transform: translateY(-50%);
   z-index: 40;
 }
 .sectionnav ul {
@@ -431,6 +433,12 @@ main {
   column-gap: var(--grid-gap);
   padding: 0 var(--gutter);
   min-width: 0;
+  /* Cap total width on very wide screens so columns/gutters/line-lengths
+     stop stretching. Anchored left (not centered) so it stays flush with
+     the fixed nav; extra space beyond the cap is just left empty on the
+     right rather than growing the grid. */
+  max-width: 1600px;
+  margin: 0 auto 0 0;
 }
 
 /* Content lives in columns 2–3 (the right two-thirds); column 1 stays empty,
@@ -1070,7 +1078,7 @@ main {
    ============================================ */
 .contact {
   text-align: left;
-  padding-bottom: clamp(0.8rem, 2.8vh, 1.4rem);
+  padding-bottom: clamp(2.5rem, 6vh, 4rem);
 }
 .contact__status {
   display: flex;
