@@ -560,7 +560,7 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   if (!section || !pin || !track || !hero) return;
 
   const cardCount = track.children.length;
-  let dockY = 178;          // fixed dock offset, in px from the viewport top
+  let dockY = 161;          // fixed dock offset, in px from the viewport top
   let slideSpan = 1850;     // px of scroll spent actually sliding between cards
   let trailingPad = 400;    // EDIT ME: extra px of scroll AFTER the last card
                              // settles, before the pin releases — this is the
