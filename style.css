@@ -1,0 +1,1189 @@
+/* ============================================
+   TOKENS
+   ============================================ */
+:root {
+  --ink: #0B0E0C;
+  --paper: #EDEDE9;
+  --accent: #5B7B6B;
+  --accent-soft: #E4E9E2;
+  --gray: #8A8578;
+  --hairline: #D9D4C8;
+  --body-ink: #3a3d39;
+
+  --font-display: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --gutter: clamp(1.5rem, 5vw, 4rem);
+  --col-max: 720px;
+  --nav-reserve: 130px;
+
+  /* 12-column grid, measured from reference: column:gutter ratio ≈ 4:1 */
+  --grid-cols: 12;
+  --grid-gap: clamp(0.5rem, 1.1vw, 0.9rem);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --stagger-step: 70ms;
+}
+
+/* ============================================
+   BREAKPOINT TIERS (consistent across the file)
+   Desktop:  > 900px   — fixed top-left text nav, 4-col stats
+   Tablet:   561–900px — top bar + dropdown nav, 2-col stats
+   Mobile:   <= 560px  — compact spacing, stacked grids
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  /* Intentionally not auto-switching to dark mode:
+     the palette is a deliberate warm-paper choice, not a default. */
+}
+
+/* ============================================
+   SPLASH SCREEN
+   Shows on every load (no localStorage skip — by design, every
+   visit). Sequence: fades IN over 0.4s, holds, then fades OUT over
+   0.6s while the real site fades in underneath it — the two fades
+   overlap deliberately (site starts revealing as the splash starts
+   dimming) so it reads as one continuous cross-fade/mask-reveal
+   rather than two separate back-to-back animations. Hold + fade
+   timing is computed in script.js (HOLD_MS / FADE_MS), not here.
+
+   Content is left-aligned to the SAME edge the fixed nav sits at
+   (var(--gutter)) rather than centered, so the splash's name reads
+   like it's already sitting where the nav/logo will be once revealed
+   — one fixed anchor point instead of the eye having to jump from
+   center to left when the site appears underneath.
+   ============================================ */
+html.splash-active {
+  overflow: hidden; /* no real-site scroll peeking behind the splash */
+}
+html.splash-active body {
+  overflow: hidden;
+}
+/* Real site content fades in under the splash once script.js starts
+   the reveal — kept subtle (a quick rise from near-invisible) rather
+   than a hard cut, so the splash's fade-out and the site's fade-in
+   read as one continuous handoff instead of two unrelated animations. */
+html.splash-active main,
+html.splash-active .topbar,
+html.splash-active .sectionnav,
+html.splash-active .sectionnav__logo {
+  opacity: 0;
+}
+html.splash-done main,
+html.splash-done .topbar,
+html.splash-done .sectionnav,
+html.splash-done .sectionnav__logo {
+  opacity: 1;
+  transition: opacity 0.6s var(--ease);
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.6rem;
+  padding-left: var(--gutter);
+  background: var(--paper);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+/* .splash-in is added a tick after mount (see script.js) — starting
+   from opacity:0 above and transitioning here is what produces the
+   actual fade-IN; it can't just start at opacity:1, or there is
+   nothing to transition FROM. */
+.splash.splash-in {
+  opacity: 1;
+  transition: opacity 0.4s var(--ease);
+}
+/* .splash-out overrides splash-in's opacity target — same element,
+   later state, slower transition so the OUT fade reads slightly more
+   gradual than the quick fade-in. */
+.splash.splash-out {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+  pointer-events: none;
+}
+
+.splash__mark {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.splash__bracket {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  color: var(--ink);
+  transform: scaleX(-1); /* small corner-bracket flourish, mirrored to point inward at the name */
+  display: inline-block;
+}
+.splash__name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.splash__title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  color: var(--body-ink);
+}
+.splash__rule {
+  display: inline-block;
+  width: clamp(60px, 12vw, 140px);
+  height: 1px;
+  background: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash { transition: none; }
+  html.splash-done main,
+  html.splash-done .topbar,
+  html.splash-done .sectionnav,
+  html.splash-done .sectionnav__logo {
+    transition: none;
+  }
+}
+
+* { box-sizing: border-box; overflow-wrap: break-word; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  cursor: url('assets/logo-cursor.png') 16 16, auto;
+}
+
+/* Interactive elements keep their own default cursor affordance —
+   the cursor itself shouldn't stay custom over something clickable;
+   the element's own hover state communicates that instead. */
+a, button, .audience, .project__tags li {
+  cursor: pointer;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+/* ============================================
+   TOP BAR (mobile) — hidden on desktop
+   ============================================ */
+.topbar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  align-items: center;
+  justify-content: space-between;
+  /* Extra top padding (on top of the normal 1rem) plus safe-area-inset
+     support: when a mobile browser's address bar auto-collapses on
+     scroll, this bar's `top: 0` now sits flush against the real screen
+     edge instead of below the address bar — without this, the same
+     1rem padding suddenly reads as "gone" because there's no longer a
+     dark browser bar above it providing visual separation. The extra
+     fixed amount guarantees breathing room regardless of the browser
+     chrome's state; the safe-area-inset addition keeps it correct on
+     notched/dynamic-island devices too. */
+  padding: calc(1rem + env(safe-area-inset-top, 0px) + 0.4rem) var(--gutter) 1rem;
+}
+.topbar__logo {
+  display: block;
+}
+.topbar__logo-mark {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.topbar__toggle {
+  width: 32px; height: 32px;
+  background: none; border: none;
+  display: flex; flex-direction: column;
+  justify-content: center; gap: 5px;
+  cursor: pointer;
+}
+.topbar__toggle span {
+  display: block; height: 2px; width: 100%;
+  background: var(--ink);
+  transition: transform 0.3s var(--ease);
+}
+
+/* ============================================
+   SECTION NAV — logo pinned top-left, links vertically centered
+   ============================================ */
+.sectionnav__logo {
+  position: fixed;
+  top: clamp(1.5rem, 4vh, 2.5rem);
+  left: calc(var(--gutter) - 15px);
+  z-index: 41;
+  display: inline-flex;
+}
+.sectionnav__logo-mark {
+  display: block;
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  transition: transform 0.3s var(--ease-out-soft);
+}
+.sectionnav__logo:hover .sectionnav__logo-mark {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.sectionnav {
+  /* Anchored to the SAME fixed top-offset as .hero's padding-top
+     (not a viewport-height percentage) so "INTRO" always lines up
+     with the hero's first line, regardless of window height. */
+  position: fixed;
+  top: clamp(9.8rem, 18vh, 10rem);
+  left: var(--gutter);
+  z-index: 40;
+}
+.sectionnav ul {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.sectionnav a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray);
+  display: inline-block;
+  transform-origin: left center;
+  transition: color 0.25s var(--ease), transform 0.25s var(--ease-out-soft), font-size 0.25s var(--ease-out-soft);
+}
+.sectionnav li {
+  transition: margin 0.25s var(--ease-out-soft);
+}
+.sectionnav a:hover,
+.sectionnav a.active {
+  color: var(--ink);
+}
+.sectionnav a.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+.sectionnav a:hover {
+  transform: scale(1.35);
+}
+/* Neighbors make room when a link grows on hover */
+.sectionnav li:has(a:hover) {
+  margin: 0.4rem 0;
+}
+
+@media (max-width: 900px) {
+  .sectionnav {
+    display: block;
+    position: fixed;
+    top: 64px;
+    left: 0; right: 0;
+    transform: none;
+    background: var(--paper);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s var(--ease);
+  }
+  .sectionnav.dotnav--open {
+    max-height: 320px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .sectionnav ul {
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem var(--gutter) 1rem;
+  }
+  .sectionnav a {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0;
+    font-size: 0.78rem;
+  }
+  .sectionnav a:hover { transform: none; }
+  .sectionnav li:has(a:hover) { margin: 0; }
+  .sectionnav__logo { display: none; }
+  .topbar { display: flex; }
+  body { padding-top: 72px; }
+  main { padding-left: var(--gutter); }
+}
+
+/* ============================================
+   FLOATING SHAPES — shared base styling for every decorative shape on
+   the page (all live in the scatter layer; see #scatterLayer below).
+   Each shape is border-only/transparent at rest and fills solid with
+   its own color on hover, with a slight lift + tinted shadow.
+   ============================================ */
+.float-shape {
+  position: absolute;
+  border: 2px solid var(--shape-hover);
+  background: transparent;
+  border-radius: 3px;
+  transition: background-color 0.35s var(--ease), box-shadow 0.35s var(--ease), transform 0.35s var(--ease-out-soft);
+}
+.float-shape:hover {
+  background-color: var(--shape-hover);
+  /* "Slightly elevated" — a soft lift plus a shadow tinted to match each
+     shape's own color, rather than one generic gray shadow for all of
+     them. Fallback shadow first for browsers without color-mix()
+     support; the second declaration overrides it wherever color-mix()
+     is understood. */
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--shape-hover) 55%, transparent);
+}
+/* Inner wrapper carries the constant idle bob, kept separate from the
+   shape's own border/fill/elevation transition and from the JS
+   scroll-parallax transform (applied to the OUTER .float-shape) so the
+   different motions never overwrite each other on the same property.
+   --float-boost is set by JS (1 at rest, up to ~1.6 briefly while
+   actively scrolling) so the drift visibly quickens during scroll
+   without ever becoming large. */
+.float-shape__bob {
+  width: 100%;
+  height: 100%;
+  animation: shapeBob calc(7s / var(--float-boost, 1)) ease-in-out infinite;
+}
+.float-shape:nth-of-type(2n) .float-shape__bob {
+  animation-direction: reverse;
+  animation-duration: calc(8.5s / var(--float-boost, 1));
+}
+.float-shape:nth-of-type(3n) .float-shape__bob {
+  animation-duration: calc(6.2s / var(--float-boost, 1));
+}
+@keyframes shapeBob {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(4px, -6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .float-shape__bob { animation: none; }
+}
+
+/* ============================================
+   SCATTER LAYER — 16 shapes placed to match a reference screenshot
+   exactly: one single color, sizes/positions copied directly from that
+   image (see script.js for how those numbers were measured), including
+   landing on top of body copy in several places. This is a literal
+   match rather than an original composition.
+
+   The layer is a single absolutely-positioned full-page element appended
+   directly to <body> (not nested inside any section), sized to the full
+   document height by JS, so percentage-based positions are computed
+   against one simple coordinate space.
+
+   Desktop-only: hidden below 901px — the reference image's layout is a
+   desktop capture, with no mobile equivalent to match.
+   ============================================ */
+#scatterLayer {
+  display: none;
+}
+@media (min-width: 901px) {
+  #scatterLayer {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none; /* layer ignores clicks; individual shapes re-enable below */
+    z-index: 1; /* above the paper background, below real content's own stacking */
+  }
+  #scatterLayer .float-shape {
+    pointer-events: auto;
+    position: absolute; /* top/left/width/height set inline per-shape by JS */
+  }
+}
+
+/* 4 distinct, vibrant colors — one per remaining shape, kept saturated
+   and bright rather than muted. */
+.scatter-shape--c1  { --shape-hover: #E51919; } /* red */
+.scatter-shape--c2  { --shape-hover: #E56F19; } /* orange */
+.scatter-shape--c15 { --shape-hover: #D5E519; } /* chartreuse */
+.scatter-shape--c16 { --shape-hover: #E51956; } /* crimson */
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: var(--grid-gap);
+  padding: 0 var(--gutter);
+  min-width: 0;
+  /* Cap total width on very wide screens so columns/gutters/line-lengths
+     stop stretching. Anchored left (not centered) so it stays flush with
+     the fixed nav; extra space beyond the cap is just left empty on the
+     right rather than growing the grid. */
+  max-width: 1600px;
+  margin: 0 auto 0 0;
+}
+
+/* Content lives in columns 2–3 (the right two-thirds); column 1 stays empty,
+   reserved visually for the fixed nav that floats over it. */
+.section {
+  grid-column: 2 / 4;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(4rem, 12vh, 8rem) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.section:last-of-type { border-bottom: none; }
+
+.section__index {
+  margin: 0 0 0.75rem;
+}
+.section__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  margin: 0 0 2.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  padding-top: clamp(9.1rem, 18vh, 10rem);
+  border-bottom: 1px solid var(--hairline);
+}
+.eyebrow {
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 0.6s var(--ease) 0.05s forwards;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0 1.4rem;
+  width: 100%;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.eyebrow::-webkit-scrollbar {
+  display: none;
+}
+.audience {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.2s var(--ease), font-weight 0.2s var(--ease);
+}
+.eyebrow__group {
+  display: inline-flex;
+  flex-shrink: 0;
+  white-space: nowrap;
+  gap: 0.4rem;
+}
+.audience:hover,
+.audience[aria-pressed="true"] {
+  color: var(--ink);
+  font-weight: 700;
+}
+.hero__headline {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6.5vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0 0 1.75rem;
+  transition: opacity 0.3s var(--ease);
+}
+.hero__headline.is-swapping {
+  opacity: 0.25;
+}
+.hero__headline .line {
+  display: block;
+  overflow: hidden;
+}
+.hero__headline .line span {
+  display: block;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: lineRise 0.85s var(--ease-out-soft) forwards;
+}
+/* Stagger each line — JS wraps text in inner span and sets --i */
+.hero__headline .line:nth-child(1) span { animation-delay: 0.08s; }
+.hero__headline .line:nth-child(2) span { animation-delay: 0.18s; }
+.hero__headline .line:nth-child(3) span { animation-delay: 0.28s; }
+.hero__headline .line:nth-child(4) span { animation-delay: 0.38s; }
+
+@keyframes lineRise {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.hero__lede {
+  font-size: 1.05rem;
+  color: var(--body-ink);
+  max-width: 540px;
+  margin: 0 0 3rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 0.7s var(--ease-out-soft) 0.55s forwards;
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.75rem 1.5rem;
+  margin: 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--hairline);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 0.7s var(--ease-out-soft) 0.7s forwards;
+}
+.stats__item dt { margin: 0 0 0.35rem; }
+.stats__item dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.stats__item .count { color: var(--accent); }
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+  .section { grid-column: 1 / 2; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================
+   WORK — horizontal scroll-snap (desktop only)
+
+   Mechanism: #work becomes a TALL outer section (extra height reserved
+   purely to "host" scroll distance) containing .work-pin, which is
+   `position: sticky` at the same height the hero content already sits at
+   (--dock-y, read from the hero by JS so it never drifts out of sync with
+   that CSS value). While the page scrolls through that reserved height,
+   .work-pin just sits still on screen — exactly like the hero "stopping"
+   at that line, per the reference screenshot — and JS reads the *page's*
+   own scroll delta during that window to drive the card track sideways.
+
+   This is why the result feels like one continuous scroll rather than a
+   separate interaction: there is no separate hijacked listener scoped to
+   the card area. It's the same vertical scroll the whole time; the only
+   difference is that for this stretch of the page, scrolling moves a
+   horizontal track instead of moving content up the screen, because nothing
+   else on screen has anywhere to go while .work-pin is pinned.
+
+   .project-viewport stays a hard mask (overflow: hidden) so cards never
+   visibly cross the nav/gutter edge, same as before. .project-track moves
+   via transform: translateX(), still driven by JS, just from scroll
+   position now rather than from intercepted wheel deltas directly.
+
+   Below 901px: .work-pin-section gets no extra height and .work-pin is
+   never sticky, so the section is just normal flow — identical to the
+   original stacked layout, zero JS involvement.
+   ============================================ */
+.project {
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--hairline);
+  transition: padding-left 0.4s var(--ease-out-soft);
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="%230B0E0C" stroke-width="2"/><path d="M16 4 H24 V12" fill="none" stroke="%230B0E0C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 4 L13 15" stroke="%230B0E0C" stroke-width="2" stroke-linecap="round"/></svg>') 14 14, pointer;
+}
+.project:hover {
+  padding-left: 0.5rem;
+}
+.project:first-of-type { border-top: none; padding-top: 0; }
+
+@media (min-width: 901px) {
+  .work-pin-section {
+    /* Reserves the scroll distance JS will consume while pinned. JS sets
+       the precise value via --work-scroll-span once it knows the real
+       viewport width (the slide distance is 2 card-widths); this is a
+       reasonable pre-JS fallback so layout isn't broken if JS is slow. */
+    height: calc(100vh + var(--work-scroll-span, 160vh));
+    padding: 0;
+    border-bottom: none;
+  }
+  .work-pin {
+    position: sticky;
+    top: var(--dock-y, 10rem);
+    padding: 0 0 clamp(4rem, 12vh, 8rem);
+  }
+
+  .project-viewport {
+    overflow: hidden;
+    width: 100%;
+  }
+  .project-track {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 300%; /* 3 cards × 100% of the viewport each */
+    will-change: transform;
+  }
+  .project-track > .project {
+    flex: 0 0 calc(100% / 3); /* = 100% of the viewport, since the track itself is 300% wide */
+    width: calc(100% / 3);
+    min-width: 0;
+    box-sizing: border-box;
+    border-top: none;
+    border-left: 1px solid var(--hairline);
+    padding: 2.5rem clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .project-track > .project:first-of-type {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+
+.project__meta { margin-bottom: 0.6rem; }
+.project__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3.2vw, 2.2rem);
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.015em;
+}
+.project__title.hover-shift {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.35s var(--ease-out-soft);
+}
+.project__title.hover-shift::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%;
+  height: 1.5px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out-soft);
+}
+.project:hover .project__title.hover-shift {
+  transform: translateX(6px);
+}
+.project:hover .project__title.hover-shift::after {
+  transform: scaleX(1);
+}
+.project__layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+.project__side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.project__role {
+  margin: 0;
+  color: var(--accent);
+}
+.project__body {
+  margin: 0;
+  color: var(--body-ink);
+}
+.project__tags {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0; padding: 0;
+}
+.project__tags li {
+  border: 1px solid var(--hairline);
+  border-radius: 100px;
+  padding: 0.3rem 0.75rem;
+  color: var(--gray);
+  display: inline-block;
+  width: fit-content;
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease), transform 0.3s var(--ease-out-soft);
+}
+.project__tags li:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+@media (max-width: 900px) {
+  .project__layout { grid-template-columns: 1fr; }
+  .project__tags { flex-direction: row; flex-wrap: wrap; }
+}
+
+/* ============================================
+   APPROACH — desktop: two independent vertical card tracks, pinned via
+   scroll (same mechanism as Work's horizontal track, rotated 90°).
+
+   Left track holds 2 cards: [Curious/Rigorous] then [lower paragraph].
+   Right track holds 2 cards: [upper paragraph] then [Plain-spoken/
+   Resourceful].
+
+   The two tracks do NOT move on the same schedule — JS drives them
+   sequentially across one shared scroll-progress value: right track
+   slides through its full distance FIRST while the left track sits
+   still, then the instant the right track settles on its 2nd card, the
+   left track begins its own full slide. See setupApproachPin in
+   script.js for the exact progress math.
+
+   .approach-lane has no overflow masking — cards genuinely scroll past
+   its top/bottom edges rather than being clipped at a fixed boundary.
+   .approach-track moves via transform: translateY(), JS-driven from
+   scroll position, never from intercepted wheel events.
+
+   Mobile (<901px): none of this pin/track markup is shown at all —
+   .approach-mobile-fallback (plain stacked flow, original styling,
+   zero JS) renders instead. See the bottom of this block.
+   ============================================ */
+.values {
+  list-style: none;
+  margin: 0 0 2.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.values li {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 6.5vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.approach__body {
+  color: var(--body-ink);
+  margin: 0;
+  font-size: 0.95rem;
+  max-width: 360px;
+}
+
+/* Mobile fallback only — desktop's cards don't use these alignment
+   tricks since each lane is its own fixed-width column already. */
+.approach-mobile-fallback .approach__layout {
+  display: flex;
+  flex-direction: column;
+}
+.approach-mobile-fallback .approach__body--upper,
+.approach-mobile-fallback .approach__body--lower {
+  align-self: flex-start;
+  text-align: left;
+  max-width: none;
+  margin-bottom: 1.5rem;
+}
+
+/* Desktop pin section hidden entirely below 901px; mobile fallback
+   hidden entirely at/above 901px — exactly one of the two ever renders. */
+.approach-mobile-fallback { display: block; }
+.approach-pin-section { display: none; }
+
+@media (min-width: 901px) {
+  .approach-mobile-fallback { display: none; }
+  .approach-pin-section {
+    display: block;
+    /* Reserves the scroll distance JS will consume while pinned. JS sets
+       the precise value via --approach-scroll-span once it knows the
+       real card height; this is a reasonable pre-JS fallback. */
+    height: calc(100vh + var(--approach-scroll-span, 160vh));
+    padding: 0;
+    border-bottom: none;
+  }
+  .approach-pin {
+    position: sticky;
+    /* Same dock line Work uses, so both sections' pinned content aligns
+       to the same top edge relative to the fixed nav. */
+    top: var(--dock-y, 10rem);
+    padding: 0 0 clamp(4rem, 12vh, 8rem);
+  }
+  .approach-pin .approach__layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .approach-lane {
+    /* No overflow masking — cards are meant to genuinely scroll up and
+       off the page when departing (including past the "Approach"
+       label and the section above it, which is expected/accepted),
+       and arriving cards can be glimpsed sliding up from below before
+       their turn. Clipping here previously sliced departing text in
+       a hard horizontal line right at the lane's own edge, which read
+       as the content vanishing into an invisible pocket rather than
+       actually leaving the page. */
+    height: clamp(420px, 60vh, 620px);
+  }
+  .approach-track {
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+  }
+  /* Left track: 2 cards stacked, so the track is 200% of the lane's
+     height and each card is 50% of the TRACK (= 100% of the lane).
+     Moving exactly one card's height is therefore -50% of the track's
+     OWN height, not -100% — translateY's percentage is always relative
+     to the element's own box, not to a single child, so the JS derives
+     this from the actual slot count rather than assuming -100% per
+     card (see setupApproachPin in script.js). */
+  #approachTrackLeft {
+    height: 200%;
+  }
+  #approachTrackLeft .approach-card {
+    height: 50%;
+  }
+  /* Right track: 3 slots (empty, card 2, card 3), so 300% / 33.33% each. */
+  #approachTrackRight {
+    height: 300%;
+  }
+  #approachTrackRight .approach-card {
+    height: calc(100% / 3);
+  }
+  .approach-card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .approach-lane--right .approach-card {
+    align-items: flex-start;
+  }
+  /* Smaller than the mobile fallback's size — each lane here is roughly
+     half the content column's width (minus the gap between lanes), so
+     the original clamp's ceiling (4.2rem) was wide enough to push
+     "Resourceful" past the lane's right edge. This still scales with
+     viewport width via vw, just with a lower ceiling. */
+  .approach-pin .values li {
+    font-size: clamp(2rem, 4.2vw, 2.9rem);
+  }
+}
+
+/* ============================================
+   TIMELINE
+   ============================================ */
+.timeline {
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.timeline__item {
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--hairline);
+  cursor: default;
+}
+.timeline__item:first-child { border-top: none; padding-top: 0; }
+.timeline__org {
+  margin: 0 0 0.6rem;
+}
+.timeline__role {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.5rem;
+}
+.timeline__when {
+  margin: 0 0 1rem;
+}
+.timeline__body {
+  margin: 0;
+  color: var(--body-ink);
+  font-size: 0.95rem;
+  max-width: 520px;
+}
+
+/* Timeline is single-column by default now — no breakpoint override needed */
+
+/* ============================================
+   NOTES / TESTIMONIALS
+   ============================================ */
+.note {
+  margin: 0 0 2.5rem;
+  padding: 0 0 0 1.25rem;
+  border-left: 2px solid var(--accent);
+}
+.note p {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.005em;
+}
+.note footer {
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+.note footer .mono { display: inline; }
+
+/* ============================================
+   CERTIFICATIONS CAROUSEL — infinite auto-scroll, pauses on hover.
+
+   Each .cert-item is ONE <img>: the SVGs themselves are complete,
+   finished cards (logo mark + divider + cert name + duration, all
+   baked into the file as exported) — there is no separate bare
+   logomark to pair with extra HTML text, so nothing else is layered
+   on top. Sized by height only; width is left to scale naturally per
+   image's own aspect ratio, since the 5 source files aren't all the
+   same proportions.
+
+   Track holds the set TWICE back-to-back (see index.html) for a
+   seamless loop: the keyframe moves exactly -50% of the track's own
+   width, which is only seamless if set 1 and set 2 measure to
+   IDENTICAL widths — true here since spacing is uniform (one `gap`
+   value on the track, no per-item border/padding that could make the
+   set1→set2 seam look different from every other gap). That uniform-
+   seam requirement is also why there's no border between items
+   anymore: a border would have to vanish on exactly one item (the
+   last of "set 1") to avoid a double-line at the seam, which is the
+   kind of inconsistency that reads as a visible hiccup even when the
+   distance itself is correct.
+   ============================================ */
+.certs__label {
+  margin: 0 0 2rem;
+}
+.certs__carousel {
+  width: 100%;
+  overflow: hidden;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.certs__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  animation: certsScroll 28s linear infinite;
+}
+.certs__carousel:hover .certs__track {
+  animation-play-state: paused;
+}
+.cert-item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.cert-item__img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+@keyframes certsScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .certs__track { animation: none; }
+}
+
+@media (max-width: 560px) {
+  .cert-item__img { height: 22px; }
+  .certs__track { gap: 2rem; }
+}
+
+/* ============================================
+   ABOUT
+   ============================================ */
+.about__grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+  position: relative;
+  min-width: 0;
+}
+.about__notes {
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--hairline);
+}
+.about__photo {
+  width: 220px;
+  height: 220px;
+  margin-bottom: -3.5rem;
+  position: relative;
+  z-index: 2;
+}
+.about__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.about__text {
+  padding-bottom: 2rem;
+}
+.about__degree {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hairline);
+}
+.timeline__role.timeline__role--small {
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+}
+.about__text p {
+  margin: 0 0 1.25rem;
+  color: var(--body-ink);
+}
+@media (max-width: 560px) {
+  .about__grid { grid-template-columns: 1fr; }
+  .about__photo {
+    width: 100vw;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* ============================================
+   CONTACT
+   ============================================ */
+.contact {
+  text-align: left;
+  padding-bottom: clamp(2.5rem, 6vh, 4rem);
+}
+.contact__status {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  color: #2E7D4F;
+  font-weight: 500;
+  animation: statusFlash 1.6s ease-in-out infinite;
+}
+.status-dot {
+  display: inline-block;
+  width: 0.72em;
+  height: 0.72em;
+  border-radius: 50%;
+  background: #2E7D4F;
+}
+@keyframes statusFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact__status { animation: none; }
+}
+.contact__headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 2rem;
+  max-width: 560px;
+}
+.contact__email {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 2rem;
+  transition: transform 0.3s var(--ease-out-soft), color 0.3s var(--ease);
+}
+.contact__email:hover {
+  transform: translateX(4px);
+  color: var(--accent);
+}
+.contact__links {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.contact__links a {
+  font-size: 0.9rem;
+  color: var(--gray);
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 2px;
+}
+.contact__links a:hover { color: var(--ink); border-color: var(--ink); }
+.colophon { margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+.colophon__mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ============================================
+   SCROLL REVEAL (sections fade up as they enter)
+   ============================================ */
+.section:not(.hero) {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger-group: children cascade in with individual delays set via JS */
+.stagger-group > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--ease-out-soft), transform 0.6s var(--ease-out-soft);
+}
+.stagger-group.stagger-group--visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__headline .line span,
+  .eyebrow,
+  .hero__lede,
+  .stats {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .stagger-group > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .section:not(.hero) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
