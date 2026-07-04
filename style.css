@@ -468,7 +468,7 @@ main {
    HERO
    ============================================ */
 .hero {
-  padding-top: clamp(9.8rem, 18vh, 10rem);
+  padding-top: clamp(9.1rem, 18vh, 10rem);
   border-bottom: 1px solid var(--hairline);
 }
 .eyebrow {
