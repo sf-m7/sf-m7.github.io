@@ -348,11 +348,11 @@ document.querySelectorAll('[data-reveal-lines] .line').forEach((line) => {
 // Audience switcher: clicking a label swaps the headline copy
 // ============================================
 const bios = {
-  anyone: ["Hi, I'm Alex —", "a product manager", "who finds the story", "hiding in the data."],
-  hiring: ["I'm an early-career", "data PM who ships,", "measures, and tells you", "honestly what worked."],
-  engineers: ["I write the SQL", "before I write the spec —", "so the ask already", "matches the schema."],
-  analysts: ["I used to be you —", "now I fight for the", "metric definition", "before the roadmap."],
-  founders: ["I find the one number", "that's actually lying", "to the team, and", "go fix it first."],
+  anyone: ["Hi, I'm Saif — ", "I find the gap between", "what a product is worth and what it captures.", "Then I close it."],
+  Hiring_Managers: ["I'm a Growth PM,", "who ships, measures, and", "work products up to success"],
+  Founders: ["I write the SQL", "before I write the spec —", "so the ask already", "matches the schema."],
+  Growth_Teams: ["I used to be you —", "now I fight for the", "metric definition", "before the roadmap."],
+  Data_Teams: ["I find the one number", "that's actually lying", "to the team, and", "go fix it first."],
 };
 
 const audienceButtons = document.querySelectorAll('.audience');
