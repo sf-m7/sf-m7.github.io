@@ -106,7 +106,13 @@
   }
 
   .deck-card {
-    max-width: 56rem;
+    width: 85%; /* was max-width: 56rem — that capped it to a small boxed
+                   preview. This is 85% of the beat's own content area,
+                   which already excludes the gutter/progress-rail padding,
+                   so it can't visually collide with the rail on the right. */
+    height: 85vh; /* 85% of the actual viewport height — the beat itself is
+                     a full-screen fixed panel, so vh here is safe and
+                     doesn't need the same padding-awareness as width does. */
     border: 1px solid var(--hairline);
     border-radius: 8px;
     overflow: hidden;
@@ -115,7 +121,9 @@
 
   .deck-card iframe {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 100%; /* was aspect-ratio: 16/9 — that derived height FROM width,
+                     which is exactly what kept it small. Now height comes
+                     directly from the card's own 85vh, independent of width. */
     border: none;
     display: block;
     background: var(--paper);
@@ -481,7 +489,7 @@
       <p class="kicker">Original presentation</p>
       <div class="deck-card">
         <!-- Swap the src below for your real Figma embed URL -->
-        <iframe src="about:blank" title="Insta-Hired presentation deck — 26 slides" loading="lazy"></iframe>
+        <iframe src="https://www.figma.com/deck/UhdsMnJrRoGSllmPidaM3W" title="Insta-Hired presentation deck — 26 slides" loading="lazy"></iframe>
         <p class="deck-caption">Paste your Figma "Embed" link into the iframe src above.</p>
       </div>
     </div>
