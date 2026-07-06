@@ -256,12 +256,10 @@ a { color: inherit; text-decoration: none; }
 }
 
 .sectionnav {
-  /* Anchored to the SAME fixed top-offset as .hero's padding-top
-     (not a viewport-height percentage) so "INTRO" always lines up
-     with the hero's first line, regardless of window height. */
   position: fixed;
-  top: clamp(9.8rem, 18vh, 10rem);
+  top: 42%;
   left: var(--gutter);
+  transform: translateY(-50%);
   z-index: 40;
 }
 .sectionnav ul {
@@ -433,12 +431,6 @@ main {
   column-gap: var(--grid-gap);
   padding: 0 var(--gutter);
   min-width: 0;
-  /* Cap total width on very wide screens so columns/gutters/line-lengths
-     stop stretching. Anchored left (not centered) so it stays flush with
-     the fixed nav; extra space beyond the cap is just left empty on the
-     right rather than growing the grid. */
-  max-width: 1600px;
-  margin: 0 auto 0 0;
 }
 
 /* Content lives in columns 2–3 (the right two-thirds); column 1 stays empty,
@@ -468,7 +460,7 @@ main {
    HERO
    ============================================ */
 .hero {
-  padding-top: clamp(9.1rem, 18vh, 10rem);
+  padding-top: clamp(9.8rem, 18vh, 10rem);
   border-bottom: 1px solid var(--hairline);
 }
 .eyebrow {
@@ -618,6 +610,14 @@ main {
    original stacked layout, zero JS involvement.
    ============================================ */
 .project {
+  display: block; /* was implicit when this was an <article>; now that it's
+                      an <a> (to make the whole card a real link), this has
+                      to be explicit — <a> is inline by default, and only
+                      the desktop flex container (below) auto-blockifies
+                      its children. Below 901px there's no flex container,
+                      so without this the mobile stacked layout would
+                      break: padding/border wouldn't reserve space or span
+                      full width the way a block box does. */
   padding: 2.5rem 0;
   border-top: 1px solid var(--hairline);
   transition: padding-left 0.4s var(--ease-out-soft);
@@ -651,12 +651,19 @@ main {
   .project-track {
     display: flex;
     flex-wrap: nowrap;
-    width: 300%; /* 3 cards × 100% of the viewport each */
+    /* width and flex-basis below are hardcoded to the CURRENT card count
+       (2). JS auto-detects card count for the slide animation itself, but
+       this layout math does not — if you add a 3rd/4th card later, update
+       BOTH: width becomes N*100% (e.g. 300% for 3 cards, 400% for 4), and
+       each .project's flex-basis becomes calc(100% / N) to match. Skipping
+       this step will make added cards overflow/clip instead of sliding
+       into view. */
+    width: 200%; /* 2 cards × 100% of the viewport each */
     will-change: transform;
   }
   .project-track > .project {
-    flex: 0 0 calc(100% / 3); /* = 100% of the viewport, since the track itself is 300% wide */
-    width: calc(100% / 3);
+    flex: 0 0 calc(100% / 2); /* = 100% of the viewport, since the track itself is 200% wide */
+    width: calc(100% / 2);
     min-width: 0;
     box-sizing: border-box;
     border-top: none;
@@ -1078,7 +1085,7 @@ main {
    ============================================ */
 .contact {
   text-align: left;
-  padding-bottom: clamp(2.5rem, 6vh, 4rem);
+  padding-bottom: clamp(0.8rem, 2.8vh, 1.4rem);
 }
 .contact__status {
   display: flex;

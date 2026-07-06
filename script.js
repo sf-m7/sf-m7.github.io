@@ -560,8 +560,16 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   if (!section || !pin || !track || !hero) return;
 
   const cardCount = track.children.length;
-  let dockY = 161;          // fixed dock offset, in px from the viewport top
-  let slideSpan = 1850;     // px of scroll spent actually sliding between cards
+  let dockY = 178;          // fixed dock offset, in px from the viewport top
+  // slideSpan is the TOTAL scroll budget across ALL card-to-card
+  // transitions combined, not a per-transition amount — cardCount is read
+  // automatically above, but this number is not. With 2 cards (1
+  // transition), 1100px gives that single slide roughly the same pace the
+  // original 1850px gave each of the 2 transitions when there were 3
+  // cards (1850/2 ≈ 925px each). If you add a 3rd/4th card later, scale
+  // this back up (roughly transitions × 900-950px is a reasonable start)
+  // or the remaining transitions will feel rushed.
+  let slideSpan = 1100;
   let trailingPad = 400;    // EDIT ME: extra px of scroll AFTER the last card
                              // settles, before the pin releases — this is the
                              // "buffer at the end" knob. Raise it if the last
