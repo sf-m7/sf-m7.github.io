@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta-Hired — Founding Product Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1c1a;
+    --paper: #f1efe7;
+    --accent: #7c9473;
+    --gray-on-paper: #6f6f68;
+    --hairline: rgba(28, 28, 26, 0.15);
+    --gutter: clamp(1.5rem, 6vw, 5rem);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: var(--paper); }
+
+  body {
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+
+  .scroll-spacer {
+    height: 2200vh; /* recalculated by JS — pre-JS fallback only */
+  }
+
+  .stage-beat {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    padding: var(--gutter);
+    padding-right: clamp(4rem, 12vw, 9rem);
+    clip-path: inset(100% 0 0 0);
+    will-change: clip-path, transform;
+  }
+
+  .stage-beat:first-of-type { clip-path: none; }
+
+  .bg-paper { background: var(--paper); color: var(--ink); }
+  .bg-accent { background: var(--accent); color: var(--paper); }
+
+  .eyebrow-role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0.75;
+  }
+
+  .beat-big {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    max-width: 18ch;
+  }
+
+  .beat-normal {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: clamp(1.15rem, 3vw, 1.65rem);
+    line-height: 1.55;
+    max-width: 32ch;
+  }
+
+  .key[data-tone="accent"] { color: var(--accent); font-weight: 800; }
+  .key[data-tone="ink"] { color: var(--ink); font-weight: 800; }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(2rem, 6vw, 4rem);
+    justify-content: flex-start;
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .stat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .bg-accent .stat-num { color: var(--ink); }
+  .bg-paper .stat-num { color: var(--accent); }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    opacity: 0.75;
+  }
+
+  .deck-card {
+    max-width: 56rem;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .deck-card iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    display: block;
+    background: var(--paper);
+  }
+
+  .deck-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gray-on-paper);
+    padding: 1rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .progress-hud {
+    position: fixed;
+    right: var(--gutter);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .progress-rail {
+    width: 2px;
+    height: 110px;
+    background: rgba(28, 28, 26, 0.15);
+    position: relative;
+    overflow: hidden;
+    border-radius: 1px;
+  }
+
+  .progress-fill {
+    width: 100%;
+    height: calc(var(--progress, 0) * 100%);
+    background: var(--accent);
+  }
+
+  .chapter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    background: rgba(241, 239, 231, 0.85);
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .reduced-motion .progress-hud { display: none; }
+  .reduced-motion .stage-beat,
+  noscript ~ .stage-beat {
+    position: relative;
+    height: 100vh;
+    clip-path: none !important;
+    transform: none !important;
+  }
+  .reduced-motion .scroll-spacer { display: none; }
+
+
+  /* ---------- lean editorial type roles ---------- */
+  .kicker { font-family:'IBM Plex Mono',monospace; font-size:clamp(0.65rem,1.2vw,0.74rem); letter-spacing:0.12em; text-transform:uppercase; opacity:0.55; margin-bottom:clamp(1rem,2.6vw,1.6rem); }
+  .say { font-family:'Inter',sans-serif; font-weight:400; font-size:clamp(1rem,2.3vw,1.3rem); line-height:1.5; max-width:27ch; }
+  .hit { font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(1.7rem,5.5vw,3.3rem); line-height:1.12; letter-spacing:-0.01em; max-width:16ch; }
+  .hit-lg { font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(2.2rem,7.15vw,4.3rem); line-height:1.08; letter-spacing:-0.01em; max-width:16ch; }
+  .solo { font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(2.6rem,11vw,6.8rem); line-height:0.95; letter-spacing:-0.02em; }
+  .spacer-line { height:clamp(0.8rem,3vw,1.6rem); }
+  .say + .hit, .hit + .say, .kicker + .hit, .kicker + .say, .hit + .hit-lg { margin-top:clamp(0.8rem,2.2vw,1.2rem); }
+
+  /* ---------- stat hierarchy: multi-number rows ---------- */
+  .fig-row {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4.5vw, 3rem);
+    margin-top: clamp(1.5rem, 4.5vw, 2.4rem);
+  }
+  .fig-block {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.3rem, 1vw, 0.5rem);
+  }
+  .fig-div {
+    align-self: stretch;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.2;
+    min-height: 2.2rem;
+  }
+  .fig-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(2.1rem, 6.4vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .fig-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.62rem, 1.05vw, 0.72rem);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    max-width: 14ch;
+    line-height: 1.3;
+  }
+
+  /* ---------- stat hierarchy: single standout number ---------- */
+  .stat-solo {
+    margin-top: clamp(1.4rem, 4vw, 2.2rem);
+  }
+  .stat-solo .fig-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(2.1rem, 6.4vw, 3.6rem); /* matched to standard .fig-num scale — was oversized relative to every other stat */
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    display: block;
+  }
+  .stat-solo .fig-label {
+    margin-top: 0.4rem;
+  }
+
+
+  .note {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+    line-height: 1.55;
+    max-width: 30ch;
+    opacity: 0.62;
+  }
+  .peek-card {
+    max-width: min(90vw, 44rem);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .peek-card img,
+  .peek-card video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .peek-card.is-wireframe img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  @media (max-width: 600px) {
+    .stage-beat { padding-right: var(--gutter); }
+    .progress-hud {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: none;
+      z-index: 999;
+    }
+    .progress-rail {
+      width: 100%;
+      height: 3px;
+      border-radius: 0;
+    }
+    .progress-fill {
+      width: calc(var(--progress, 0) * 100%);
+      height: 100%;
+    }
+    .chapter-label {
+      position: absolute;
+      top: 8px;
+      inset-inline-end: var(--gutter);
+    }
+    .stats { gap: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scroll-spacer"></div>
+
+  <div class="progress-hud" id="progressHud">
+    <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="chapter-label" id="chapterLabel">01 / 24</div>
+  </div>
+
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">Co-founder &amp; Product Discovery · Sep–Dec 2024</p>
+      <p class="say">I graduated bilingual. English was the one skill I felt confident getting paid for.</p>
+      <p class="hit-lg">Landing the right job proved to be <span class="key" data-tone="accent">harder than graduation itself</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="hit">Jobs scattered in Facebook posts and groups. Outright scams. Recruiters who never return your messages.</p>
+      <p class="say" style="margin-top:0.9rem">An exhausting cycle that ended — when it ended at all — more by luck than by design.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">The obvious solution</p>
+      <p class="hit">Build a job board. Filter by language. <span class="key" data-tone="accent">Match bilinguals to jobs.</span></p>
+      <p class="say" style="margin-top:0.9rem">However, it sounds so obvious that anyone who's lived this problem would build it.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="say">I nearly did. Then I realized something uncomfortable:</p>
+      <p class="hit-lg">My idea was full of <span class="key" data-tone="ink">bias</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">The trap of personal frustration</p>
+      <p class="say">I was solving from my own pain — a job seeker's pain. But a job board is a two-sided marketplace.</p>
+      <p class="hit" style="margin-top:0.9rem">The job market has <span class="key" data-tone="accent">more players than talent</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">The resources</p>
+      <p class="hit">$50. No coding skills. <span class="key" data-tone="ink">Four months.</span></p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">So before building anything</p>
+      <p class="say">I forced the idea through four rounds of de-risking — from personas to wireframes my co-founder could validate early.</p>
+      <p class="hit" style="margin-top:0.9rem">Evidence before <span class="key" data-tone="accent">conviction</span>.</p>
+      <div class="fig-row">
+        <div class="fig-block"><span class="fig-num">4</span><span class="fig-label">De-risking rounds</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">2</span><span class="fig-label">Sides of the marketplace mapped</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="say">Spec wireframes describe a solution — too finished to challenge. So I chose descriptive ones.</p>
+      <p class="hit" style="margin-top:0.9rem">Show <span class="key" data-tone="ink">function</span>, not form. Easier to break early.</p>
+      <p class="note" style="margin-top:1rem">Descriptive wireframes map what a screen does, not how it looks.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">A peek at the wireframes</p>
+      <div class="peek-card is-wireframe">
+        <img src="media/descriptive-wireframes.png" alt="Descriptive wireframes for Insta-Hired, showing job listings, filters, and application status screens" loading="lazy">
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="say">At some point, research has to meet reality.</p>
+      <p class="hit">So I shipped. <span class="key" data-tone="ink">Three times</span> — for less than $50.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">V1.0 · Do people care?</p>
+      <p class="hit">WordPress.</p>
+      <p class="say" style="margin-top:0.9rem">Live in days. No code. Cheapest possible way to find out if anyone would sign up.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">A peek at V1.0</p>
+      <div class="peek-card">
+        <img src="media/wordpress-v1.gif" alt="Live recording of the Insta-Hired WordPress V1.0 prototype" loading="lazy">
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">V1.1 · Can we iterate on it?</p>
+      <p class="hit">Softr, no-code.</p>
+      <p class="say" style="margin-top:0.9rem">Signs of life — but too rigid to move on. So we rebuilt on something we could reshape weekly.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">A peek at V1.1</p>
+      <div class="peek-card">
+        <img src="media/softr-v1-1.gif" alt="Live recording of the Insta-Hired Softr V1.1 prototype" loading="lazy">
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">V1.2 · Would it hold up in the market?</p>
+      <p class="hit">Figma prototype.</p>
+      <p class="say" style="margin-top:0.9rem">Not "do people like it?" — but "would this survive real competition?"</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">A peek at V1.2</p>
+      <div class="peek-card">
+        <img src="media/figma-prototype-v1-2.gif" alt="Live recording of the Insta-Hired Figma V1.2 prototype" loading="lazy">
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">V1 asked: do job seekers need this enough to actually use it?</p>
+      <p class="say">Nearly every user came through someone else's recommendation. When we needed research participants, they brought their friends.</p>
+      <div class="fig-row">
+        <div class="fig-block"><span class="fig-num">100%</span><span class="fig-label">Referral rate</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">100+</span><span class="fig-label">Early signups</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">1</span><span class="fig-label">Signed LOI</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="say">The numbers said yes. But they also said something I hadn't expected.</p>
+      <p class="hit">The data forced <span class="key" data-tone="ink">two pivots</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">Pivot one</p>
+      <p class="say">Every job board asks users to sign up first. Ours shouldn't have.</p>
+      <p class="hit" style="margin-top:0.9rem">Search and apply <span class="key" data-tone="accent">without registering</span>. Accounts could wait.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">Pivot two</p>
+      <p class="say">I'd cast recruiters as the enemy. They were the shortcut.</p>
+      <p class="hit" style="margin-top:0.9rem">They already had the networks I'd need months to build — <span class="key" data-tone="ink">partnering saved us runway</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="say">What started as "a job board for bilinguals" became something different:</p>
+      <p class="hit">A validated product strategy, a clear business model, and a <span class="key" data-tone="accent">proven market</span> — for $50.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">Who did what</p>
+      <p class="hit">Every strategic call — from research to both pivots — was <span class="key" data-tone="ink">mine</span>.</p>
+      <p class="say" style="margin-top:0.8rem">Every line of code across all three MVPs — my co-founder, Osama Ali.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="say">The full 26-slide presentation tells the detailed story.</p>
+      <p class="hit">See the original deck <span class="key" data-tone="accent">below ↓</span></p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">Original presentation</p>
+      <div class="deck-card">
+        <!-- Swap the src below for your real Figma embed URL -->
+        <iframe src="about:blank" title="Insta-Hired presentation deck — 26 slides" loading="lazy"></iframe>
+        <p class="deck-caption">Paste your Figma "Embed" link into the iframe src above.</p>
+      </div>
+    </div>
+  </section>
+
+  <noscript>
+    <style>.stage-beat { position: relative !important; height: 100vh; clip-path: none !important; transform: none !important; } .scroll-spacer { display: none !important; } .progress-hud { display: none !important; }</style>
+  </noscript>
+
+  <script>
+    var reducedMotion = !window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+    if (reducedMotion) {
+      document.body.classList.add('reduced-motion');
+    } else {
+      /* Tune these two numbers to taste. */
+      var ZONE_VH_MULTIPLIER = 2.2;   // scroll distance per transition — higher = slower
+      var ENTRY_OFFSET = 42;          // px the incoming beat slides up while arriving
+      var EXIT_OFFSET = 20;           // px the outgoing beat drifts up while covered
+
+      /*
+        One direction per transition, hand-sequenced rather than
+        strictly alternating — no two in a row repeat, and it doesn't
+        fall into an obvious short cycle. Extend/reorder freely;
+        there must be one entry per transition (beats.length - 1).
+      */
+      var DIRECTIONS = ['ttb', 'ltr', 'rtl', 'ttb', 'rtl', 'ltr', 'rtl', 'ltr', 'rtl', 'btt', 'ttb', 'ltr', 'ttb', 'btt', 'ttb', 'btt', 'rtl', 'ttb', 'ltr', 'rtl', 'btt', 'ttb', 'btt'];
+
+      var beats = Array.from(document.querySelectorAll('.stage-beat'));
+      var spacer = document.querySelector('.scroll-spacer');
+      var progressFill = document.getElementById('progressFill');
+      var chapterLabel = document.getElementById('chapterLabel');
+      var statStates = {};
+      var zoneHeight = 0;
+      var totalHeight = 0;
+
+      function recalc() {
+        zoneHeight = window.innerHeight * ZONE_VH_MULTIPLIER;
+        totalHeight = (beats.length - 1) * zoneHeight;
+        spacer.style.height = (totalHeight + window.innerHeight) + 'px'; // +1vh buffer so the final transition can reach 100%
+      }
+
+      function clipFor(direction, hiddenAmount) {
+        switch (direction) {
+          case 'ltr': return 'inset(0 ' + hiddenAmount + '% 0 0)';
+          case 'btt': return 'inset(' + hiddenAmount + '% 0 0 0)';
+          case 'ttb': return 'inset(0 0 ' + hiddenAmount + '% 0)';
+          default:    return 'inset(0 0 0 ' + hiddenAmount + '%)'; /* rtl */
+        }
+      }
+
+      function animateCount(el) {
+        var target = parseFloat(el.dataset.target);
+        var suffix = el.dataset.suffix || '';
+        var duration = 900;
+        var start = performance.now();
+        function tick(now) {
+          var p = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function handleStats(beatIndex, progress) {
+        var statEls = beats[beatIndex].querySelectorAll('[data-target]');
+        if (!statEls.length) return;
+        var key = 'beat' + beatIndex;
+        if (progress >= 0.5 && statStates[key] !== 'shown') {
+          statStates[key] = 'shown';
+          statEls.forEach(function (el) {
+            el.textContent = '0' + (el.dataset.suffix || '');
+            animateCount(el);
+          });
+        } else if (progress < 0.08 && statStates[key] === 'shown') {
+          statStates[key] = 'hidden';
+        }
+      }
+
+      function onScroll() {
+        var scrollY = window.scrollY;
+        var progress = [];
+
+        for (var i = 1; i < beats.length; i++) {
+          var zoneStart = (i - 1) * zoneHeight;
+          var p = (scrollY - zoneStart) / zoneHeight;
+          progress[i] = Math.max(0, Math.min(1, p));
+        }
+
+        beats.forEach(function (beat, i) {
+          var p = progress[i] || 0;
+
+          if (i > 0) {
+            var hiddenAmount = (1 - p) * 100;
+            var dir = DIRECTIONS[i - 1] || 'rtl';
+            beat.style.clipPath = clipFor(dir, hiddenAmount);
+            handleStats(i, p);
+          }
+
+          var entry = i === 0 ? 0 : (1 - p) * ENTRY_OFFSET;
+          var nextP = (i + 1 < beats.length) ? (progress[i + 1] || 0) : 0;
+          var exit = -nextP * EXIT_OFFSET;
+          beat.style.transform = 'translateY(' + (entry + exit) + 'px)';
+        });
+
+        var overallPct = totalHeight > 0 ? Math.max(0, Math.min(1, scrollY / totalHeight)) : 0;
+        progressFill.style.setProperty('--progress', overallPct); // desktop reads this as height, mobile as width — same value drives both
+        var chapter = Math.min(beats.length, Math.floor(overallPct * beats.length) + 1);
+        chapterLabel.textContent = String(chapter).padStart(2, '0') + ' / ' + String(beats.length).padStart(2, '0');
+      }
+
+      var ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(function () { onScroll(); ticking = false; });
+        }
+      }
+
+      window.addEventListener('scroll', requestTick, { passive: true });
+      window.addEventListener('resize', function () { recalc(); onScroll(); });
+
+      recalc();
+      onScroll();
+    }
+  </script>
+
+</body>
+</html>
