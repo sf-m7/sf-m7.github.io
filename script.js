@@ -12,7 +12,7 @@
 // own scroll-position-driven setup (Work/Approach pin math, the
 // scatter-shape layer, etc.) still runs immediately on load exactly as
 // it always has — none of that is delayed by the splash; only its
-// VISIBILITY is held back via opacity/overflow, not its initialization.
+// VISIBILITY is held back via opacity/overflow, not its initialization..
 // ============================================
 (function splashScreen() {
   const splash = document.getElementById('splash');
