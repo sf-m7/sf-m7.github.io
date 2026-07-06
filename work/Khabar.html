@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khabar — Founding Product Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1c1a;
+    --paper: #f1efe7;
+    --accent: #7c9473;
+    --gray-on-paper: #6f6f68;
+    --hairline: rgba(28, 28, 26, 0.15);
+    --gutter: clamp(1.5rem, 6vw, 5rem);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: var(--paper); }
+
+  body {
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+
+  .scroll-spacer {
+    height: 2200vh; /* recalculated by JS — pre-JS fallback only */
+  }
+
+  .stage-beat {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    padding: var(--gutter);
+    padding-right: clamp(4rem, 12vw, 9rem);
+    clip-path: inset(100% 0 0 0);
+    will-change: clip-path, transform;
+  }
+
+  .stage-beat:first-of-type { clip-path: none; }
+
+  .bg-paper { background: var(--paper); color: var(--ink); }
+  .bg-accent { background: var(--accent); color: var(--paper); }
+
+  .eyebrow-role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0.75;
+  }
+
+  .beat-big {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    max-width: 18ch;
+  }
+
+  .beat-normal {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: clamp(1.15rem, 3vw, 1.65rem);
+    line-height: 1.55;
+    max-width: 32ch;
+  }
+
+  .key[data-tone="accent"] { color: var(--accent); font-weight: 800; }
+  .key[data-tone="ink"] { color: var(--ink); font-weight: 800; }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(2rem, 6vw, 4rem);
+    justify-content: flex-start;
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .stat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+  }
+
+  .bg-accent .stat-num { color: var(--ink); }
+  .bg-paper .stat-num { color: var(--accent); }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    opacity: 0.75;
+  }
+
+  .deck-card {
+    max-width: 56rem;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .deck-card iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    display: block;
+    background: var(--paper);
+  }
+
+  .deck-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gray-on-paper);
+    padding: 1rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .progress-hud {
+    position: fixed;
+    right: var(--gutter);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .progress-rail {
+    width: 2px;
+    height: 110px;
+    background: rgba(28, 28, 26, 0.15);
+    position: relative;
+    overflow: hidden;
+    border-radius: 1px;
+  }
+
+  .progress-fill {
+    width: 100%;
+    height: calc(var(--progress, 0) * 100%);
+    background: var(--accent);
+  }
+
+  .chapter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    background: rgba(241, 239, 231, 0.85);
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .reduced-motion .progress-hud { display: none; }
+  .reduced-motion .stage-beat,
+  noscript ~ .stage-beat {
+    position: relative;
+    height: 100vh;
+    clip-path: none !important;
+    transform: none !important;
+  }
+  .reduced-motion .scroll-spacer { display: none; }
+
+
+  /* ---------- lean editorial type roles ---------- */
+  .kicker { font-family:'IBM Plex Mono',monospace; font-size:clamp(0.65rem,1.2vw,0.74rem); letter-spacing:0.12em; text-transform:uppercase; opacity:0.55; margin-bottom:clamp(1rem,2.6vw,1.6rem); }
+  .say { font-family:'Inter',sans-serif; font-weight:400; font-size:clamp(1rem,2.3vw,1.3rem); line-height:1.5; max-width:27ch; }
+  .hit { font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(1.7rem,5.5vw,3.3rem); line-height:1.12; letter-spacing:-0.01em; max-width:16ch; }
+  .hit-lg { font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(2.2rem,7.15vw,4.3rem); line-height:1.08; letter-spacing:-0.01em; max-width:16ch; }
+  .solo { font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(2.6rem,11vw,6.8rem); line-height:0.95; letter-spacing:-0.02em; }
+  .spacer-line { height:clamp(0.8rem,3vw,1.6rem); }
+  .say + .hit, .hit + .say, .kicker + .hit, .kicker + .say, .hit + .hit-lg { margin-top:clamp(0.8rem,2.2vw,1.2rem); }
+
+  /* ---------- stat hierarchy: multi-number rows ---------- */
+  .fig-row {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4.5vw, 3rem);
+    margin-top: clamp(1.5rem, 4.5vw, 2.4rem);
+  }
+  .fig-block {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.3rem, 1vw, 0.5rem);
+  }
+  .fig-div {
+    align-self: stretch;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.2;
+    min-height: 2.2rem;
+  }
+  .fig-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(2.1rem, 6.4vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .fig-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.62rem, 1.05vw, 0.72rem);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    max-width: 14ch;
+    line-height: 1.3;
+  }
+
+  /* ---------- stat hierarchy: single standout number ---------- */
+  .stat-solo {
+    margin-top: clamp(1.4rem, 4vw, 2.2rem);
+  }
+  .stat-solo .fig-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(2.1rem, 6.4vw, 3.6rem); /* matched to standard .fig-num scale — was oversized relative to every other stat */
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    display: block;
+  }
+  .stat-solo .fig-label {
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 600px) {
+    .stage-beat { padding-right: var(--gutter); }
+    .progress-hud {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: none;
+      z-index: 999;
+    }
+    .progress-rail {
+      width: 100%;
+      height: 3px;
+      border-radius: 0;
+    }
+    .progress-fill {
+      width: calc(var(--progress, 0) * 100%);
+      height: 100%;
+    }
+    .chapter-label {
+      position: absolute;
+      top: 8px;
+      inset-inline-end: var(--gutter);
+    }
+    .stats { gap: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scroll-spacer"></div>
+
+  <div class="progress-hud" id="progressHud">
+    <div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="chapter-label" id="chapterLabel">01 / 21</div>
+  </div>
+
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">Founder · Khabar</p>
+      <p class="say">Nineteen Egyptian fashion brands. Each one competing completely blind to the others.</p>
+      <p class="hit-lg">I set out to give them <span class="key" data-tone="accent">sight</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="hit">Scrape every store, rank the discounts, ship a dashboard.</p>
+      <div class="spacer-line"></div>
+      <p class="say">However, this would be a bad path.</p>
+      <p class="say" style="margin-top:0.4rem">Why?</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="hit">The data would always lie — and the sight would be <span class="key" data-tone="accent">worse than blindness</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">The discount</p>
+      <p class="hit">"Was 500, now 300."</p>
+      <p class="say" style="margin-top:0.9rem">Every site says it. But the brand types that "was" — and inflates it, so the discount is permanent theater.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="hit">Chase it, and you bleed <span class="key" data-tone="accent">real margin</span> fighting fake cuts.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">What's actually selling</p>
+      <p class="hit">Either hidden, or simply never published.</p>
+      <p class="say" style="margin-top:0.9rem">The one thing every merchant wants to know — and for that reason, you can't get it. At least not easily.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="hit">No honest source. <span class="key" data-tone="accent">Anywhere.</span></p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">And the deepest one</p>
+      <p class="hit">Catch 22.</p>
+      <p class="say" style="margin-top:0.9rem">A dashboard shows the brands your picture — but those brands are your customers. Show them, and they hide from you. Or worse: they game you, and distort it.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="say">Your signal dies faster the more you sell.</p>
+      <p class="solo">Backwards.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">Three dead ends. One real problem.</p>
+      <p class="say">Fake prices. Missing stock. A mirror that punishes success. I stopped patching each alone and asked what they shared.</p>
+      <p class="hit" style="margin-top:1rem">All three trust <span class="key" data-tone="ink">what the market says</span> about itself.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="say">I decided not to mirror the market.</p>
+      <p class="hit">I decided to <span class="key" data-tone="accent">audit</span> the market.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">The move</p>
+      <p class="say">Trust nothing a brand types. Count only what Khabar witnesses — the price it watched fall, the product it watched vanish.</p>
+      <div class="fig-row">
+        <div class="fig-block"><span class="fig-num">1M+</span><span class="fig-label">Price observations</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">~400K</span><span class="fig-label">Product catalogue</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="say">Not only can I see the <span class="key" data-tone="accent">measured</span>, not the reported, performance.</p>
+      <p class="hit" style="margin-top:1rem">I can also compare the two — and spot the <span class="key" data-tone="accent">deception</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="say">A pricing tracker quietly became something rarer:</p>
+      <p class="hit">the only <span class="key" data-tone="ink">citable truth</span> in a market built on marketing copy.</p>
+      <div class="fig-row">
+        <div class="fig-block"><span class="fig-num">24</span><span class="fig-label">Derived signals</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">14</span><span class="fig-label">Sellable products</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">Seeing clearly was step one, a good solution</p>
+      <p class="hit">A true picture still has to <span class="key" data-tone="accent">survive</span> — and pay for itself.</p>
+      <p class="say" style="margin-top:1rem">Simply, the good solution must be a good product.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">What it costs to exist</p>
+      <p class="say">A solo founder's real enemy is the bill that arrives before the first customer does.</p>
+      <p class="hit" style="margin-top:1rem">I architected it to run a full year at <span class="key" data-tone="ink">zero dollars</span>.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">Why it holds together</p>
+      <p class="say">I stitched several free tiers into one system — then kept re-tuning it to balance value, defensibility and staying free.</p>
+      <p class="hit" style="margin-top:1rem">Business needs and <span class="key" data-tone="accent">real constraints</span>, reconciled by design.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">Built without a technical co-founder — but Claude Code</p>
+      <p class="hit">I directed every system decision, without writing the code myself.</p>
+      <div class="stat-solo">
+        <span class="fig-num">4</span>
+        <span class="fig-label">Site technologies, working in harmony</span>
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="kicker">One problem worth naming</p>
+      <p class="say">Nineteen brands, no shared language for color or naming. "Sky Blue" on one site, "Baby Blue" on another — same color, no way to compare.</p>
+      <p class="say" style="margin-top:0.9rem">Without reconciling it, cross-brand comparison is impossible.</p>
+    </div>
+  </section>
+  <section class="stage-beat bg-accent">
+    <div class="stack">
+      <p class="kicker">The solution</p>
+      <p class="hit">I built a system that learns from human correction — the same principle used to <span class="key" data-tone="ink">train AI models with RLHF</span>.</p>
+      <div class="fig-row">
+        <div class="fig-block"><span class="fig-num">95%</span><span class="fig-label">Size coverage</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">96%</span><span class="fig-label">Color coverage</span></div>
+        <div class="fig-div"></div>
+        <div class="fig-block"><span class="fig-num">89%</span><span class="fig-label">Color-family normalized</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage-beat bg-paper">
+    <div class="stack">
+      <p class="say">No slide deck for this one.</p>
+      <p class="hit">See the <span class="key" data-tone="accent">live product</span> instead ↓</p>
+    </div>
+  </section>
+
+  <noscript>
+    <style>.stage-beat { position: relative !important; height: 100vh; clip-path: none !important; transform: none !important; } .scroll-spacer { display: none !important; } .progress-hud { display: none !important; }</style>
+  </noscript>
+
+  <script>
+    var reducedMotion = !window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+    if (reducedMotion) {
+      document.body.classList.add('reduced-motion');
+    } else {
+      /* Tune these two numbers to taste. */
+      var ZONE_VH_MULTIPLIER = 2.2;   // scroll distance per transition — higher = slower
+      var ENTRY_OFFSET = 42;          // px the incoming beat slides up while arriving
+      var EXIT_OFFSET = 20;           // px the outgoing beat drifts up while covered
+
+      /*
+        One direction per transition, hand-sequenced rather than
+        strictly alternating — no two in a row repeat, and it doesn't
+        fall into an obvious short cycle. Extend/reorder freely;
+        there must be one entry per transition (beats.length - 1).
+      */
+      var DIRECTIONS = ['ttb', 'btt', 'ltr', 'btt', 'ttb', 'btt', 'rtl', 'ltr', 'ttb', 'ltr', 'ttb', 'btt', 'rtl', 'ltr', 'btt', 'ltr', 'rtl', 'ltr', 'ttb', 'btt'];
+
+      var beats = Array.from(document.querySelectorAll('.stage-beat'));
+      var spacer = document.querySelector('.scroll-spacer');
+      var progressFill = document.getElementById('progressFill');
+      var chapterLabel = document.getElementById('chapterLabel');
+      var statStates = {};
+      var zoneHeight = 0;
+      var totalHeight = 0;
+
+      function recalc() {
+        zoneHeight = window.innerHeight * ZONE_VH_MULTIPLIER;
+        totalHeight = (beats.length - 1) * zoneHeight;
+        spacer.style.height = (totalHeight + window.innerHeight) + 'px'; // +1vh buffer so the final transition can reach 100%
+      }
+
+      function clipFor(direction, hiddenAmount) {
+        switch (direction) {
+          case 'ltr': return 'inset(0 ' + hiddenAmount + '% 0 0)';
+          case 'btt': return 'inset(' + hiddenAmount + '% 0 0 0)';
+          case 'ttb': return 'inset(0 0 ' + hiddenAmount + '% 0)';
+          default:    return 'inset(0 0 0 ' + hiddenAmount + '%)'; /* rtl */
+        }
+      }
+
+      function animateCount(el) {
+        var target = parseFloat(el.dataset.target);
+        var suffix = el.dataset.suffix || '';
+        var duration = 900;
+        var start = performance.now();
+        function tick(now) {
+          var p = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function handleStats(beatIndex, progress) {
+        var statEls = beats[beatIndex].querySelectorAll('[data-target]');
+        if (!statEls.length) return;
+        var key = 'beat' + beatIndex;
+        if (progress >= 0.5 && statStates[key] !== 'shown') {
+          statStates[key] = 'shown';
+          statEls.forEach(function (el) {
+            el.textContent = '0' + (el.dataset.suffix || '');
+            animateCount(el);
+          });
+        } else if (progress < 0.08 && statStates[key] === 'shown') {
+          statStates[key] = 'hidden';
+        }
+      }
+
+      function onScroll() {
+        var scrollY = window.scrollY;
+        var progress = [];
+
+        for (var i = 1; i < beats.length; i++) {
+          var zoneStart = (i - 1) * zoneHeight;
+          var p = (scrollY - zoneStart) / zoneHeight;
+          progress[i] = Math.max(0, Math.min(1, p));
+        }
+
+        beats.forEach(function (beat, i) {
+          var p = progress[i] || 0;
+
+          if (i > 0) {
+            var hiddenAmount = (1 - p) * 100;
+            var dir = DIRECTIONS[i - 1] || 'rtl';
+            beat.style.clipPath = clipFor(dir, hiddenAmount);
+            handleStats(i, p);
+          }
+
+          var entry = i === 0 ? 0 : (1 - p) * ENTRY_OFFSET;
+          var nextP = (i + 1 < beats.length) ? (progress[i + 1] || 0) : 0;
+          var exit = -nextP * EXIT_OFFSET;
+          beat.style.transform = 'translateY(' + (entry + exit) + 'px)';
+        });
+
+        var overallPct = totalHeight > 0 ? Math.max(0, Math.min(1, scrollY / totalHeight)) : 0;
+        progressFill.style.setProperty('--progress', overallPct); // desktop reads this as height, mobile as width — same value drives both
+        var chapter = Math.min(beats.length, Math.floor(overallPct * beats.length) + 1);
+        chapterLabel.textContent = String(chapter).padStart(2, '0') + ' / ' + String(beats.length).padStart(2, '0');
+      }
+
+      var ticking = false;
+      function requestTick() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(function () { onScroll(); ticking = false; });
+        }
+      }
+
+      window.addEventListener('scroll', requestTick, { passive: true });
+      window.addEventListener('resize', function () { recalc(); onScroll(); });
+
+      recalc();
+      onScroll();
+    }
+  </script>
+
+</body>
+</html>
