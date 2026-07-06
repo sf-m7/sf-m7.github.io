@@ -349,10 +349,10 @@ document.querySelectorAll('[data-reveal-lines] .line').forEach((line) => {
 // ============================================
 const bios = {
   anyone: ["Hi, I'm Saif — ", "I find the gap between", "what a product is worth and what it captures.", "Then I close it."],
-  Hiring_Managers: ["I'm a Growth PM,", "who ships, measures, and", "work products up to success"],
-  Founders: ["I write the SQL", "before I write the spec —", "so the ask already", "matches the schema."],
-  Growth_Teams: ["I used to be you —", "now I fight for the", "metric definition", "before the roadmap."],
-  Data_Teams: ["I find the one number", "that's actually lying", "to the team, and", "go fix it first."],
+  Hiring_Managers: ["I've built from zero", "and fixed what leaks —", "most PMs get good at one.", "I've shipped proof of both."],
+  Founders: ["I took a product", "from thesis to live", "with $0 infrastructure —", "give me the zero."],
+  Growth_Teams: ["I've closed 200+ deals", "and cut workflows 60% —", "I know the funnel from", "both sides of the glass."],
+  Data_Teams: ["I build the metric", "that can't be gamed,", "then the product", "that sells the truth."],
 };
 
 const audienceButtons = document.querySelectorAll('.audience');
